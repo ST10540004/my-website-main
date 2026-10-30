@@ -517,4 +517,425 @@ footer p {
 .social-links a:focus {
     color: var(--color-accent);
 }
+
+/* ========================================================
+   PART 3 ADDITIONS — paste at the very BOTTOM of style.css
+   A. Layout fixes (Part 2 feedback: home page + footer)
+   B. Responsive map (Part 2 feedback: map not responsive)
+   C. Forms: errors, success, new input types
+   D. Accordion      E. Lightbox      F. Events search
+   G. Animations     H. Dark theme    I. Utilities
+   ======================================================== */
+
+/* ---------- A. LAYOUT FIXES ---------- */
+
+/* Sticky footer: footer is always full width and sits at the bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+main {
+    flex: 1 0 auto;
+    width: 100%;
+}
+
+footer {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.footer-nav a {
+    color: var(--color-white);
+    font-size: var(--fs-sm);
+    text-decoration: underline;
+}
+
+.footer-nav a:hover,
+.footer-nav a:focus {
+    color: var(--color-accent);
+}
+
+/* Home page: two-column hero (text left, image right) */
+.hero {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-lg);
+}
+
+.hero-text {
+    flex: 1 1 320px;
+}
+
+.hero-image {
+    flex: 1 1 320px;
+}
+
+.hero-image img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(27, 42, 74, 0.18);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+}
+
+.btn-outline:hover,
+.btn-outline:focus {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.contact-list li {
+    margin-bottom: 0.4rem;
+}
+
+.contact-list a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* ---------- B. RESPONSIVE MAP ---------- */
+.map-container {
+    width: 100%;
+    margin: var(--space-md) 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+#map,
+.map-container iframe {
+    display: block;
+    width: 100%;
+    height: 360px;
+    border: 0;
+}
+
+/* ---------- C. FORMS ---------- */
+input[type="tel"],
+input[type="search"] {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-white);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="tel"]:focus,
+input[type="search"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(217, 72, 15, 0.15);
+}
+
+.invalid {
+    border-color: #B00020 !important;
+    box-shadow: 0 0 0 3px rgba(176, 0, 32, 0.12);
+}
+
+.form-response {
+    display: none;
+    max-width: 600px;
+    margin-top: var(--space-md);
+    padding: 1rem 1.25rem;
+    border: 1px solid;
+    border-radius: var(--radius);
+    font-size: var(--fs-sm);
+}
+
+.form-response.success {
+    background-color: #E8F5E9;
+    border-color: #2E7D32;
+    color: #1B4D1F;
+}
+
+.form-response.error {
+    background-color: #FDEDEE;
+    border-color: #B00020;
+    color: #7A0016;
+}
+
+.form-response p {
+    margin: 0 0 0.5rem;
+    max-width: none;
+    color: inherit;
+}
+
+.form-response ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+}
+
+.form-response a {
+    display: inline-block;
+    margin-top: 0.25rem;
+    font-weight: 700;
+    text-decoration: underline;
+    color: inherit;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---------- D. ACCORDION (FAQ) ---------- */
+.accordion {
+    max-width: 800px;
+    margin: var(--space-md) 0;
+}
+
+.accordion-item {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-xs);
+    overflow: hidden;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: transparent;
+    color: var(--color-secondary);
+    font-size: var(--fs-base);
+    font-weight: 700;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover,
+.accordion-header:focus {
+    background-color: rgba(201, 162, 39, 0.12);
+}
+
+.accordion-header::after {
+    content: '+';
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-primary);
+}
+
+.accordion-header[aria-expanded="true"]::after {
+    content: '\2013';
+}
+
+.accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-panel p {
+    margin: 0;
+    padding: 0 1.25rem 1rem;
+    max-width: none;
+}
+
+/* ---------- E. GALLERY LIGHTBOX ---------- */
+.gallery-item {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.lightbox[hidden] {
+    display: none;
+}
+
+.lightbox-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 90vw;
+    max-height: 85vh;
+}
+
+.lightbox-img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: var(--radius);
+}
+
+.lightbox-caption {
+    color: var(--color-white);
+    font-size: var(--fs-sm);
+    text-align: center;
+}
+
+.lightbox-close,
+.lightbox-nav {
+    position: absolute;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--color-white);
+    font-size: 1.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus,
+.lightbox-nav:hover,
+.lightbox-nav:focus {
+    background-color: var(--color-primary);
+}
+
+.lightbox-close { top: 1rem; right: 1rem; }
+.lightbox-prev { left: 1rem; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 1rem; top: 50%; transform: translateY(-50%); }
+
+.no-scroll {
+    overflow: hidden;
+}
+
+/* ---------- F. EVENTS SEARCH ---------- */
+.events-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.events-tools input[type="search"] {
+    flex: 1 1 260px;
+    width: auto;
+}
+
+.events-tools select {
+    flex: 0 1 180px;
+    width: auto;
+}
+
+#event-count {
+    margin-bottom: var(--space-sm);
+    font-size: var(--fs-sm);
+    color: var(--color-text-light);
+}
+
+/* ---------- G. ANIMATIONS ---------- */
+.fade-in {
+    opacity: 0;
+    translate: 0 20px;
+    transition: opacity 0.6s ease, translate 0.6s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    translate: 0 0;
+}
+
+:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ---------- H. DARK THEME (toggled by the header button) ---------- */
+body.dark {
+    --color-bg: #121212;
+    --color-text: #F2F2F2;
+    --color-text-light: #BDBDBD;
+    --color-border: #333333;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark label,
+body.dark .accordion-header {
+    color: #FFFFFF;
+}
+
+body.dark .split-panel > div,
+body.dark .team-card,
+body.dark .program-card,
+body.dark .event-card,
+body.dark .partners,
+body.dark .social-strip,
+body.dark .accordion-item,
+body.dark input,
+body.dark select,
+body.dark textarea {
+    background-color: #1E1E1E;
+    color: #F2F2F2;
+    border-color: #333333;
+}
+
+/* ---------- I. UTILITIES ---------- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---------- Responsive tweaks for the additions ---------- */
+@media screen and (max-width: 600px) {
+    #map,
+    .map-container iframe {
+        height: 280px;
+    }
+
+    .hero-image img {
+        max-height: 320px;
+    }
+
+    .events-tools select {
+        flex: 1 1 100%;
+    }
+
+    .lightbox-prev { left: 0.25rem; }
+    .lightbox-next { right: 0.25rem; }
+}
+
 }
