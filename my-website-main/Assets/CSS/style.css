@@ -1,0 +1,520 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+}
+
+/* ---------- 2. CSS VARIABLES  ---------- */
+:root {
+    /* Colour scheme */
+    --color-primary: #D9480F;   /* Burnt orange */
+    --color-secondary: #1B2A4A; /* Deep navy */
+    --color-accent: #C9A227;    /* Gold */
+    --color-bg: #F7F7F5;        /* Off-white */
+    --color-bg-dark: #121212;   /* Charcoal (dark mode) */
+    --color-text: #1B2A4A;
+    --color-text-light: #595959;
+    --color-white: #FFFFFF;
+    --color-border: #E0E0E0;
+
+    /* Typography scale */
+    --font-heading: 'Poppins', 'Montserrat', sans-serif;
+    --font-body: 'Inter', 'Open Sans', sans-serif;
+    --fs-base: 1rem;         /* 16px */
+    --fs-sm: 0.875rem;       /* 14px */
+    --fs-lg: 1.25rem;        /* 20px */
+    --fs-xl: 1.75rem;        /* 28px */
+    --fs-xxl: 2.5rem;        /* 40px */
+    --lh-base: 1.6;
+
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+    --radius: 8px;
+}
+
+/* ---------- 3. TYPOGRAPHY ---------- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    line-height: var(--lh-base);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-secondary);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+}
+
+h1 { font-size: var(--fs-xxl); margin-bottom: var(--space-sm); }
+h2 { font-size: var(--fs-xl); margin-bottom: var(--space-sm); }
+h3 { font-size: var(--fs-lg); margin-bottom: var(--space-xs); }
+
+p {
+    color: var(--color-text-light);
+    margin-bottom: var(--space-sm);
+    max-width: 65ch;
+}
+
+.eyebrow {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: var(--space-xs);
+}
+
+/* ---------- 4. LAYOUT: HEADER / NAV (Flexbox) ---------- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--fs-lg);
+    color: var(--color-white);
+}
+
+.logo span {
+    color: var(--color-accent);
+    font-weight: 400;
+    font-size: var(--fs-sm);
+}
+
+nav {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: var(--color-white);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.4rem 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+nav a:hover,
+nav a:focus {
+    border-bottom-color: var(--color-primary);
+    color: var(--color-accent);
+}
+
+nav a:active {
+    color: var(--color-primary);
+}
+
+#theme-toggle {
+    background: transparent;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    border-radius: 50%;
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: var(--fs-base);
+    transition: background-color 0.2s ease;
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* ---------- 5. MAIN CONTENT WRAPPER ---------- */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+}
+
+.page-intro {
+    max-width: 700px;
+    margin-bottom: var(--space-lg);
+}
+
+/* ---------- 6. BUTTONS ---------- */
+.btn {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: var(--fs-sm);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ---------- 7. HOME PAGE ---------- */
+.hero {
+    text-align: left;
+    margin-bottom: var(--space-lg);
+}
+
+.hero-cta {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-top: var(--space-md);
+}
+
+.split-panel {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-lg);
+}
+
+.split-panel > div {
+    flex: 1 1 280px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+}
+
+.social-strip {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-sm);
+    background-color: var(--color-white);
+    border-radius: var(--radius);
+    font-size: var(--fs-sm);
+    color: var(--color-text-light);
+}
+
+/* ---------- 8. ABOUT PAGE: TEAM GRID ---------- */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+}
+
+.team-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    text-align: center;
+    transition: box-shadow 0.2s ease;
+}
+
+.team-card:hover {
+    box-shadow: 0 4px 16px rgba(27, 42, 74, 0.12);
+}
+
+.team-card img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto var(--space-xs);
+}
+
+.partners {
+    background-color: var(--color-white);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    text-align: center;
+    margin-bottom: var(--space-md);
+}
+
+.profile-download {
+    text-align: center;
+    margin-top: var(--space-lg);
+}
+
+/* ---------- 9. PROGRAMS PAGE: CARD GRID ---------- */
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.program-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.program-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(27, 42, 74, 0.12);
+}
+
+.program-number {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+/* ---------- 10. GALLERY PAGE ---------- */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+}
+
+.gallery-item {
+    border-radius: var(--radius);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.gallery-item:hover,
+.gallery-item:focus {
+    transform: scale(1.03);
+    opacity: 0.9;
+}
+
+/* ---------- 11. EVENTS PAGE ---------- */
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.event-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.event-card > div {
+    flex: 1 1 300px;
+}
+
+.event-meta {
+    font-size: var(--fs-sm);
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+/* ---------- 12. CONTACT PAGE: FORM ---------- */
+form {
+    max-width: 600px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--color-secondary);
+    margin-top: var(--space-sm);
+    margin-bottom: 0.3rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-white);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:hover, select:hover, textarea:hover {
+    border-color: var(--color-accent);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(217, 72, 15, 0.15);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+button[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius);
+    margin-top: var(--space-md);
+    transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:focus {
+    background-color: var(--color-accent);
+}
+
+button[type="submit"]:active {
+    background-color: var(--color-secondary);
+}
+
+/* ---------- 13. FOOTER ---------- */
+footer {
+    text-align: center;
+    padding: var(--space-md);
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    font-size: var(--fs-sm);
+}
+
+footer p {
+    color: var(--color-white);
+    opacity: 0.85;
+    margin-bottom: 0.2rem;
+}
+
+/* ========================================================
+   14. RESPONSIVE DESIGN 
+   ======================================================== */
+
+/* ---- TABLET (≤ 1024px) ---- */
+@media screen and (max-width: 1024px) {
+    main {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .programs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+}
+
+/* ---- MOBILE (≤ 600px) ---- */
+@media screen and (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-xs);
+    }
+
+    nav {
+        width: 100%;
+        gap: var(--space-sm);
+        font-size: var(--fs-sm);
+    }
+
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.3rem; }
+
+    .split-panel {
+        flex-direction: column;
+    }
+
+    .team-grid,
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+    }
+
+    .hero-cta .btn {
+        text-align: center;
+    }
+
+    .event-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    form {
+        max-width: 100%;
+    }
+    .social-links a {
+    color: var(--color-white);
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.social-links a:hover,
+.social-links a:focus {
+    color: var(--color-accent);
+}
+}
