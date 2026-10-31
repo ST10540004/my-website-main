@@ -743,4 +743,274 @@ function initLightbox() {
         if (e.key === 'ArrowRight') show(current + 1);
     });
 }
+/* ========================================================
+   YOUTH QUAKE NPO - CENTRALIZED JAVASCRIPT SUITE
+   ======================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
+    initSiteSearch();
+    initLightbox();
+    initContactForm();
+    initEnquiryForm();
+});
+
+/* ---------- 1. DARK / LIGHT THEME TOGGLE ---------- */
+function initThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+
+    // Check saved theme or preference
+    const savedTheme = localStorage.getItem('yq-theme');
+    if (savedTheme) {
+        document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('yq-theme', isDark ? 'dark' : 'light');
+    });
+}
+
+/* ---------- 2. UNIVERSAL LIVE SEARCH FUNCTIONALITY ---------- */
+function initSiteSearch() {
+    // 1. Index Page Search (#site-search)
+    const indexSearch = document.getElementById('site-search');
+    if (indexSearch) {
+        indexSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const welcomeText = document.querySelector('.welcome-section p');
+            const welcomeImg = document.querySelector('.welcome-section img');
+
+            if (welcomeText) {
+                const text = welcomeText.textContent.toLowerCase();
+                const matches = text.includes(query);
+                welcomeText.style.opacity = matches || query === '' ? '1' : '0.3';
+                if (welcomeImg) welcomeImg.style.opacity = matches || query === '' ? '1' : '0.3';
+            }
+        });
+    }
+
+    // 2. About Page Search (#about-search)
+    const aboutSearch = document.getElementById('about-search');
+    if (aboutSearch) {
+        aboutSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            // Filter Story List Items
+            document.querySelectorAll('.story li').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'list-item' : 'none';
+            });
+
+            // Filter Leadership Team Cards
+            document.querySelectorAll('.team-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+
+            // Filter Footprint List Items
+            document.querySelectorAll('.footprint li').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'list-item' : 'none';
+            });
+        });
+    }
+
+    // 3. Programs Page Search (#programs-search)
+    const programsSearch = document.getElementById('programs-search');
+    if (programsSearch) {
+        programsSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            document.querySelectorAll('.program-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+    }
+
+    // 4. Gallery Page Search (#gallery-search)
+    const gallerySearch = document.getElementById('gallery-search');
+    if (gallerySearch) {
+        gallerySearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
+                item.style.display = altText.includes(query) ? 'block' : 'none';
+            });
+        });
+    }
+}
+
+/* ---------- 3. GALLERY LIGHTBOX MODAL ---------- */
+function initLightbox() {
+    const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
+    if (!thumbs.length) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'lightbox';
+    overlay.hidden = true;
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Image viewer');
+    overlay.innerHTML = `
+        <button class="lightbox-close" aria-label="Close image viewer">&times;</button>
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&#10094;</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+        <button class="lightbox-nav lightbox-next" aria-label="Next image">&#10095;</button>`;
+    document.body.appendChild(overlay);
+
+    const imgEl = overlay.querySelector('.lightbox-img');
+    const capEl = overlay.querySelector('.lightbox-caption');
+    let current = 0;
+
+    function getVisibleThumbs() {
+        return thumbs.filter(t => t.style.display !== 'none');
+    }
+
+    function show(index) {
+        const visibleThumbs = getVisibleThumbs();
+        if (!visibleThumbs.length) return;
+        
+        current = (index + visibleThumbs.length) % visibleThumbs.length;
+        imgEl.src = visibleThumbs[current].currentSrc || visibleThumbs[current].src;
+        imgEl.alt = visibleThumbs[current].alt;
+        capEl.textContent = visibleThumbs[current].alt;
+    }
+
+    function open(item) {
+        const visibleThumbs = getVisibleThumbs();
+        const index = visibleThumbs.indexOf(item);
+        if (index === -1) return;
+
+        show(index);
+        overlay.hidden = false;
+        document.body.classList.add('no-scroll');
+    }
+
+    function close() {
+        overlay.hidden = true;
+        document.body.classList.remove('no-scroll');
+        imgEl.removeAttribute('src');
+    }
+
+    thumbs.forEach(thumb => {
+        thumb.tabIndex = 0;
+        thumb.addEventListener('click', () => open(thumb));
+        thumb.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                open(thumb);
+            }
+        });
+    });
+
+    overlay.querySelector('.lightbox-close').addEventListener('click', close);
+    overlay.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
+    overlay.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+    document.addEventListener('keydown', (e) => {
+        if (overlay.hidden) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft') show(current - 1);
+        if (e.key === 'ArrowRight') show(current + 1);
+    });
+}
+
+/* ---------- 4. HELPER VALIDATION FUNCTIONS ---------- */
+function isValidName(name) {
+    const re = /^[a-zA-Z\s'-]{2,60}$/;
+    return re.test(name);
+}
+
+function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+/* ---------- 5. CONTACT FORM LOGIC ---------- */
+function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    const box = document.getElementById('contact-response');
+    const messageEl = document.getElementById('contact-message');
+    const charCountEl = document.getElementById('char-count');
+
+    if (messageEl && charCountEl) {
+        messageEl.addEventListener('input', () => {
+            charCountEl.textContent = `${messageEl.value.trim().length} / 3000`;
+        });
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('contact-name')?.value.trim() || '';
+        const email = document.getElementById('contact-email')?.value.trim() || '';
+        const type = document.getElementById('message_type')?.value || '';
+        const subjectText = document.getElementById('contact-subject')?.value.trim() || '';
+        const message = messageEl ? messageEl.value.trim() : '';
+
+        form.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+
+        let hasError = false;
+        if (!isValidName(name)) { document.getElementById('group-name')?.classList.add('has-error'); hasError = true; }
+        if (!isValidEmail(email)) { document.getElementById('group-email')?.classList.add('has-error'); hasError = true; }
+        if (!type) { document.getElementById('group-type')?.classList.add('has-error'); hasError = true; }
+        if (subjectText.length < 2) { document.getElementById('group-subject')?.classList.add('has-error'); hasError = true; }
+        if (message.length < 10 || message.length > 3000) { document.getElementById('group-message')?.classList.add('has-error'); hasError = true; }
+
+        if (hasError) {
+            if (box) {
+                box.textContent = 'Please fix the highlighted fields above before submitting.';
+                box.className = 'form-response error';
+                box.style.display = 'block';
+            }
+            return;
+        }
+
+        const mailto = `mailto:YouthQuake@mandelac.za?subject=${encodeURIComponent('[' + type + '] ' + subjectText)}&body=${encodeURIComponent(message)}`;
+        window.location.href = mailto;
+    });
+}
+
+/* ---------- 6. ENQUIRY FORM LOGIC ---------- */
+function initEnquiryForm() {
+    const form = document.getElementById('enquiry-form');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name')?.value.trim() || '';
+        const email = document.getElementById('email')?.value.trim() || '';
+        const type = document.getElementById('enquiry_type')?.value || '';
+        const message = document.getElementById('message')?.value.trim() || '';
+
+        form.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+
+        let hasError = false;
+        if (!isValidName(name)) { document.getElementById('group-enquiry-name')?.classList.add('has-error'); hasError = true; }
+        if (!isValidEmail(email)) { document.getElementById('group-enquiry-email')?.classList.add('has-error'); hasError = true; }
+        if (!type) { document.getElementById('group-enquiry-type')?.classList.add('has-error'); hasError = true; }
+        if (message.length < 10 || message.length > 1000) { document.getElementById('group-enquiry-message')?.classList.add('has-error'); hasError = true; }
+
+        if (!hasError) {
+            const box = document.getElementById('enquiry-response');
+            if (box) {
+                box.textContent = `Thank you, ${name}! Your enquiry regarding ${type} has been received. We will contact you at ${email} shortly.`;
+                box.className = 'form-response success';
+                box.style.display = 'block';
+            }
+            form.reset();
+        }
+    });
+}
 }
