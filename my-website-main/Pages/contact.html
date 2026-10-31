@@ -3,9 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Primary SEO Meta Tags -->
     <title>Contact Youth Quake NPO | KuGompo City, Eastern Cape</title>
-    <meta name="description" content="Contact Youth Quake NPO. Find our office in Cove Ridge, KuGompo City, call 078 651 0460 or send us a message online.">
+    <meta name="description" content="Contact Youth Quake NPO in Cove Ridge, KuGompo City. Call 078 651 0460, email YouthQuake@mandelac.za, or send us a message online for youth outreach enquiries.">
+    <meta name="keywords" content="Contact Youth Quake NPO, Cove Ridge NPO, KuGompo City youth development, Eastern Cape NGO contact, youth mentorship South Africa">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://YOUR-SITE-URL/pages/contact.html">
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Contact Youth Quake NPO | KuGompo City, Eastern Cape">
+    <meta property="og:description" content="Get in touch with Youth Quake NPO. Reach out for volunteer opportunities, mentorship programs, or school partnerships.">
+    <meta property="og:url" content="https://YOUR-SITE-URL/pages/contact.html">
+    <meta property="og:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
+    <meta property="og:site_name" content="Youth Quake NPO">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contact Youth Quake NPO | KuGompo City">
+    <meta name="twitter:description" content="Send a message, call, or visit Youth Quake NPO in Cove Ridge, KuGompo City.">
+    <meta name="twitter:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
+
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="../Assets/CSS/style.css">
+
+    <!-- Structured Data (Schema.org JSON-LD for NGO Contact Page) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -16,13 +39,24 @@
         "email": "YouthQuake@mandelac.za",
         "telephone": "+27786510460",
         "foundingDate": "1998",
-        "parentOrganization": { "@type": "Organization", "name": "Burning Bush Ministries" },
+        "parentOrganization": { 
+            "@type": "Organization", 
+            "name": "Burning Bush Ministries" 
+        },
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Bantry Farm, Cove Ridge",
             "addressLocality": "KuGompo City",
+            "addressRegion": "Eastern Cape",
             "postalCode": "5200",
             "addressCountry": "ZA"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+27786510460",
+            "contactType": "customer service",
+            "email": "YouthQuake@mandelac.za",
+            "availableLanguage": ["English"]
         }
     }
     </script>
@@ -31,7 +65,7 @@
 
     <header>
         <a href="index.html" class="logo">Youth Quake <span>NPO</span></a>
-        <nav>
+        <nav aria-label="Main Navigation">
             <a href="../index.html">Home</a>
             <a href="./about.html">About</a>
             <a href="./programs.html">Programs</a>
@@ -66,6 +100,7 @@
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.9400853420266!2d27.780029039354815!3d-33.058044177632574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e66e70a8fbaead7%3A0xea46ef870937fdc6!2sThe%20Bush%20Christian%20Lodge!5e0!3m2!1sen!2sza!4v1793438805623!5m2!1sen!2sza" 
                         class="map-container"
+                        title="Youth Quake NPO Location Map"
                         allowfullscreen="" 
                         loading="lazy" 
                         referrerpolicy="strict-origin-when-cross-origin">
@@ -161,6 +196,6 @@
     </footer>
 
     <!-- Custom JavaScript File -->
-    <script src="../js/script.js"></script>
+    <script src="../js/script.js" defer></script>
 </body>
 </html>
