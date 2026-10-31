@@ -3,16 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gallery | Youth Quake NPO Outreach Photos</title>
-    <meta name="description" content="See Youth Quake in action: school visits, campus outreach, mentorship sessions and community programs across the Eastern Cape.">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Gallery | Youth Quake NPO Outreach & Event Photos</title>
+    <meta name="description" content="Explore Youth Quake NPO in action: school visits, campus outreach, mentorship sessions, and community programs across the Eastern Cape.">
+    <meta name="keywords" content="Youth Quake gallery, youth outreach photos, Eastern Cape NPO photos, Adopt-a-School photos, mentorship events">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://YOUR-SITE-URL/Pages/gallery.html">
+
+    <!-- Open Graph / Social Sharing Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Gallery | Youth Quake NPO Outreach Photos">
+    <meta property="og:description" content="A look at Youth Quake in action — school visits, campus outreach, mentorship sessions, and community programs across the Eastern Cape.">
+    <meta property="og:url" content="https://YOUR-SITE-URL/Pages/gallery.html">
+    <meta property="og:image" content="https://YOUR-SITE-URL/Assets/WhatsApp%20Image%202026-08-14%20at%2023.03.36.jpeg">
+    <meta property="og:site_name" content="Youth Quake NPO">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gallery | Youth Quake NPO">
+    <meta name="twitter:description" content="Explore moments from our movement across schools and communities in the Eastern Cape.">
+    <meta name="twitter:image" content="https://YOUR-SITE-URL/Assets/WhatsApp%20Image%202026-08-14%20at%2023.03.36.jpeg">
+
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="../Assets/CSS/style.css">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": "Youth Quake NPO Outreach Gallery",
+        "description": "Moments from Youth Quake school visits, mentorship programs, and community outreach events in the Eastern Cape.",
+        "url": "https://YOUR-SITE-URL/Pages/gallery.html"
+    }
+    </script>
 </head>
 
 <body>
 
     <header>
-        <a href="index.html" class="logo">Youth Quake <span>NPO</span></a>
-        <nav>
+        <a href="../index.html" class="logo">Youth Quake <span>NPO</span></a>
+        <nav aria-label="Main Navigation">
             <a href="../index.html">Home</a>
             <a href="./about.html">About</a>
             <a href="./programs.html">Programs</a>
@@ -25,13 +57,19 @@
     </header>
 
     <main>
-        <section class="page-intro">
+        <!-- Hero Intro Section with Integrated Search Input Bar -->
+        <section class="page-intro" style="text-align: center; padding: 2rem 1rem;">
             <p class="eyebrow">Gallery</p>
             <h1>Moments from the movement.</h1>
-            <p>A look at Youth Quake in action — school visits, campus outreach,
-            mentorship sessions, and community programs across the Eastern Cape.</p>
+            <p>A look at Youth Quake in action — school visits, campus outreach, mentorship sessions, and community programs across the Eastern Cape.</p>
+
+            <!-- Search Engine Bar (Filtered via External JS) -->
+            <div class="search-container" style="max-width: 600px; margin: 1.5rem auto;">
+                <input type="text" id="gallery-search" placeholder="Search gallery (e.g., tutoring, workshop, mentorship)..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-border, #ccc); border-radius: var(--radius, 8px); font-size: 1rem;">
+            </div>
         </section>
 
+        <!-- Gallery Grid -->
         <section class="gallery-grid">
             <img src="../Assets/WhatsApp Image 2026-08-14 at 23.03.36.jpeg" alt="Adopt-a-School tutoring session" class="gallery-item">
             <img src="../Assets/IMG_6463.JPG.jpeg" alt="Campus Youth Quake leadership workshop" class="gallery-item">
@@ -53,6 +91,7 @@
         </p>
     </footer>
 
+    <!-- External JavaScript File -->
     <script src="../js/script.js" defer></script>
 
 </body>

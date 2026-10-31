@@ -626,4 +626,121 @@ function initContactForm() {
         if (charCountEl) charCountEl.textContent = '0 / 3000';
     });
 }
+
+/* ========================================================
+   YOUTH QUAKE NPO - GALLERY & SEARCH SUITE
+   ======================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+    initGallerySearch();
+    initLightbox();
+});
+
+/* ---------- 1. GALLERY SEARCH FILTERING ---------- */
+function initGallerySearch() {
+    const searchInput = document.getElementById('gallery-search');
+    const items = document.querySelectorAll('.gallery-item');
+
+    if (!searchInput || !items.length) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        items.forEach((item) => {
+            const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
+            if (altText.includes(query)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+}
+
+/* ---------- 2. LIGHTBOX INTERACTIVE MODAL ---------- */
+function initLightbox() {
+    const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
+    if (!thumbs.length) return;
+
+    // Dynamically generate Lightbox overlay DOM structure
+    const overlay = document.createElement('div');
+    overlay.className = 'lightbox';
+    overlay.hidden = true;
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Image viewer');
+    overlay.innerHTML = `
+        <button class="lightbox-close" aria-label="Close image viewer">&times;</button>
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&#10094;</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+        <button class="lightbox-nav lightbox-next" aria-label="Next image">&#10095;</button>`;
+    document.body.appendChild(overlay);
+
+    const imgEl = overlay.querySelector('.lightbox-img');
+    const capEl = overlay.querySelector('.lightbox-caption');
+    let current = 0;
+    let lastFocused = null;
+
+    function getVisibleThumbs() {
+        return thumbs.filter(t => t.style.display !== 'none');
+    }
+
+    function show(index) {
+        const visibleThumbs = getVisibleThumbs();
+        if (!visibleThumbs.length) return;
+        
+        current = (index + visibleThumbs.length) % visibleThumbs.length;
+        imgEl.src = visibleThumbs[current].currentSrc || visibleThumbs[current].src;
+        imgEl.alt = visibleThumbs[current].alt;
+        capEl.textContent = visibleThumbs[current].alt;
+    }
+
+    function open(item) {
+        const visibleThumbs = getVisibleThumbs();
+        const index = visibleThumbs.indexOf(item);
+        if (index === -1) return;
+
+        lastFocused = document.activeElement;
+        show(index);
+        overlay.hidden = false;
+        document.body.classList.add('no-scroll');
+        overlay.querySelector('.lightbox-close').focus();
+    }
+
+    function close() {
+        overlay.hidden = true;
+        document.body.classList.remove('no-scroll');
+        imgEl.removeAttribute('src');
+        if (lastFocused) lastFocused.focus();
+    }
+
+    thumbs.forEach((thumb) => {
+        thumb.tabIndex = 0;
+        thumb.setAttribute('role', 'button');
+        thumb.addEventListener('click', () => open(thumb));
+        thumb.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                open(thumb);
+            }
+        });
+    });
+
+    overlay.querySelector('.lightbox-close').addEventListener('click', close);
+    overlay.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
+    overlay.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (overlay.hidden) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft') show(current - 1);
+        if (e.key === 'ArrowRight') show(current + 1);
+    });
+}
 }
