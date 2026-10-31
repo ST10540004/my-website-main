@@ -317,18 +317,111 @@ main {
     gap: var(--space-sm);
 }
 
+/* Responsive columns for smaller screens */
+@media (max-width: 900px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .gallery-item {
+    width: 100%;
     border-radius: var(--radius);
     aspect-ratio: 4 / 3;
     object-fit: cover;
     cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
 .gallery-item:hover,
 .gallery-item:focus {
     transform: scale(1.03);
     opacity: 0.9;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+/* Lightbox Modal Styles */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.lightbox[hidden] {
+    display: none;
+}
+
+.lightbox-figure {
+    position: relative;
+    max-width: 85vw;
+    max-height: 85vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lightbox-img {
+    max-width: 100%;
+    max-height: 75vh;
+    border-radius: var(--radius);
+    object-fit: contain;
+}
+
+.lightbox-caption {
+    color: #fff;
+    margin-top: 0.75rem;
+    font-size: var(--fs-base, 1rem);
+    text-align: center;
+}
+
+.lightbox-close,
+.lightbox-nav {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.lightbox-close {
+    top: 20px;
+    right: 25px;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
+body.no-scroll {
+    overflow: hidden;
 }
 
 /* ---------- 11. EVENTS PAGE ---------- */

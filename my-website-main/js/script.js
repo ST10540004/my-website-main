@@ -139,13 +139,14 @@ function initAccordion() {
 }
 
 /* ========================================================
-   5. GALLERY LIGHTBOX (click an image to view it larger)
+   5. GALLERY LIGHTBOX (gallery.html)
    ======================================================== */
 
 function initLightbox() {
     const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
     if (!thumbs.length) return;
 
+    // Dynamically build lightbox modal in DOM
     const overlay = document.createElement('div');
     overlay.className = 'lightbox';
     overlay.hidden = true;
@@ -194,14 +195,19 @@ function initLightbox() {
         thumb.setAttribute('role', 'button');
         thumb.addEventListener('click', () => open(i));
         thumb.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(i); }
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                open(i);
+            }
         });
     });
 
     overlay.querySelector('.lightbox-close').addEventListener('click', close);
     overlay.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
     overlay.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close();
+    });
 
     document.addEventListener('keydown', (e) => {
         if (overlay.hidden) return;
