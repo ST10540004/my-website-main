@@ -6,7 +6,6 @@
     <title>Contact Youth Quake NPO | KuGompo City, Eastern Cape</title>
     <meta name="description" content="Contact Youth Quake NPO. Find our office in Cove Ridge, KuGompo City, call 078 651 0460 or send us a message online.">
     <link rel="stylesheet" href="../Assets/CSS/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -39,80 +38,129 @@
             <a href="./gallery.html">Gallery</a>
             <a href="./events.html">Events</a>
             <a href="./contact.html">Contact</a>
-            <a href="./enquiry.html">Equiry</a>
-
+            <a href="./enquiry.html">Enquiry</a>
         </nav>
         <button id="theme-toggle" aria-label="Toggle dark/light mode">◐</button>
     </header>
-    <!--Main section-->
-    <main>
-        <h1 style="text-align: center;">Contact Us</h1>
-        <p>
-            Let's build this together .Whether you want volunteer,partner with us,or bring Youth Quake to your school,campus,drop us a message.Our team responds to every enquiry.
-        </p><br/>
-        <hr/>
-    </section>
-    <h1 style="text-align: center;">Get in touch</h1>
-    <ul>
-      <li> Email: YouthQuake@mandelac.za</li>
-      <li>Phone:078 651 0460</li>
-      <li>Hours:Monday to Friday</li>
-    </ul>
-    <br/><hr/>
-    </section>
-    <!--Location section-->
-    <section>
-     <h1>Our Office</h1>
-     <ul>
-        <li>Address:Bantry farm,Cove Ridge,KuGompo City ,5200
-        </li>Map:View on Google Map
-        </ul>
-        <!--Google Map-->
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.939913558362!2d27.7825986!3d-33.0580487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e66e70a8fbaead7%3A0xea46ef870937fdc6!2sThe%20Bush%20Christian%20Lodge!5e0!3m2!1sen!2sza!4v1786653880614!5m2!1sen!2sza" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>br/><br/>
-        <hr/>
-    </section>
-    <section>
-    <h1 style="text-align: center;">Send Us a Message</h1>
-    <!--Create a form-->
-    <form id="contact-form" action="#" method="post">
 
-        <label for="contact-name">Your Name</label><br/>
-        <input type="text" id="contact-name" name="name" placeholder="Your full name" required>
-        <br/><br/>
+    <main class="contact-main">
+        <section class="contact-hero">
+            <h1>Get in <span>Touch</span></h1>
+            <p>Questions about our youth programs, volunteer opportunities, or partnerships? Send a message, call or email, and Youth Quake will reply.</p>
+        </section>
 
-        <label for="contact-email">Email Address</label><br/>
-        <input type="email" id="contact-email" name="email" placeholder="Where we can reply to you" required>
-        <br/><br/>
+        <!-- Main Split Container -->
+        <div class="contact-split-container">
+            
+            <!-- Left Panel: Info & Google Map Embed -->
+            <div class="contact-info-panel">
+                <div class="contact-details-box">
+                    <h2>Contact details</h2>
+                    <p><strong>EMAIL</strong> <a href="mailto:YouthQuake@mandelac.za">YouthQuake@mandelac.za</a></p>
+                    <p><strong>PHONE</strong> <a href="tel:+27786510460">078 651 0460</a></p>
+                    <p><strong>ADDRESS</strong> Bantry Farm, Cove Ridge, KuGompo City, 5200</p>
+                </div>
 
-        <label for="message_type">Type of Message</label><br/>
-        <select id="message_type" name="message_type" required>
-            <option value="">--Select--</option>
-            <option value="General Enquiry">General Enquiry</option>
-            <option value="Feedback">Feedback</option>
-            <option value="Media/Press">Media / Press</option>
-            <option value="Complaint">Complaint</option>
-        </select>
-        <br/><br/>
+                <!-- Interactive Google Maps Box -->
+                <div class="office-location-card">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.9400853420266!2d27.780029039354815!3d-33.058044177632574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e66e70a8fbaead7%3A0xea46ef870937fdc6!2sThe%20Bush%20Christian%20Lodge!5e0!3m2!1sen!2sza!4v1793438805623!5m2!1sen!2sza" 
+                        class="map-container"
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                    <div class="map-caption-bar">
+                        <strong>Youth Quake NPO</strong>
+                        <span>The Bush Christian Lodge, Cove Ridge &bull; tap to interact</span>
+                    </div>
+                </div>
 
-        <label for="contact-message">Message</label><br/>
-        <textarea id="contact-message" name="message" rows="10" cols="40" placeholder="Write your message here" required></textarea>
-        <br/><br/>
+                <!-- Secondary Info Section -->
+                <div class="mission-info-box">
+                    <h2>Let's build this together</h2>
+                    <p>We are always happy to hear from community partners, schools, and youth.</p>
+                    <ul>
+                        <li>&diams; Teens Camp and leadership workshops</li>
+                        <li>&diams; Adopt-a-School career days</li>
+                        <li>&diams; Youth mentorship &amp; skills training</li>
+                    </ul>
+                </div>
+            </div>
 
-        <button type="submit">Send Message</button>
-    </form>
+            <!-- Right Panel: Complete Form Container -->
+            <div class="contact-form-panel">
+                <form id="contact-form" action="#" method="post" novalidate>
+                    
+                    <div class="form-row">
+                        <div class="form-group" id="group-name">
+                            <label for="contact-name">Full name</label>
+                            <input type="text" id="contact-name" name="name" placeholder="Enter your full name">
+                            <div class="field-error-msg">Name must be 2 to 60 letters (spaces, hyphens and apostrophes allowed).</div>
+                        </div>
 
-    <div id="contact-response" style="display:none;"></div>
-</section>
-<script src="../js/script.js"></script>
+                        <div class="form-group" id="group-email">
+                            <label for="contact-email">Email address</label>
+                            <input type="email" id="contact-email" name="email" placeholder="Enter your email address so Youth Quake can reply.">
+                            <div class="field-error-msg">Enter a valid email address so we can reply.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" id="group-type">
+                            <label for="message_type">I am a...</label>
+                            <select id="message_type" name="message_type">
+                                <option value="">Choose one</option>
+                                <option value="Student">Student / Youth</option>
+                                <option value="General Enquiry">General Enquiry</option>
+                                <option value="Feedback">Feedback</option>
+                                <option value="Media/Press">Media / Press</option>
+                                <option value="Complaint">Complaint</option>
+                            </select>
+                            <div class="field-error-msg">Choose who you are or the message type.</div>
+                        </div>
+
+                        <div class="form-group" id="group-subject">
+                            <label for="contact-subject">Subject</label>
+                            <input type="text" id="contact-subject" name="subject" placeholder="Add a subject.">
+                            <div class="field-error-msg">Subject must be at least 2 characters long.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width" id="group-message">
+                        <div class="textarea-header">
+                            <label for="contact-message">Message</label>
+                            <span id="char-count">0 / 3000</span>
+                        </div>
+                        <textarea id="contact-message" name="message" rows="7" placeholder="Write your message."></textarea>
+                        <div class="field-error-msg">Message must be 10 to 3000 characters.</div>
+                    </div>
+
+                    <!-- Dynamic response feedback container -->
+                    <div id="contact-response" class="form-response"></div>
+
+                    <div class="form-footer-row">
+                        <span class="privacy-note">Your details are used only to reply to you.</span>
+                        <button type="submit" class="btn-submit">Send message</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
     </main>
-     <footer>
+
+    <footer>
         <p>&copy; Burning Bush Ministries</p>
         <p>Youth Quake &bull; Vibrant, youth-professional digital presence</p>
         <p class="social-links">
             <a href="https://facebook.com/youthquake" target="_blank" rel="noopener">Facebook</a> &bull;
-            <a href="https://instagram.com/youthquake" target="_blank" rel="noopener">instagram</a> &bull;
-            <a href="https://tiktok.com/@youthquake" target="_blank" rel="noopener">Tiktok</a> &bull;
+            <a href="https://instagram.com/youthquake" target="_blank" rel="noopener">Instagram</a> &bull;
+            <a href="https://tiktok.com/@youthquake" target="_blank" rel="noopener">TikTok</a> &bull;
             <a href="https://wa.me/+27786510460" target="_blank" rel="noopener">WhatsApp</a>
         </p>
-     </footer>
-    
+    </footer>
+
+    <!-- Custom JavaScript File -->
+    <script src="../js/script.js"></script>
+</body>
+</html>

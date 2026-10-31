@@ -34,6 +34,7 @@ function isValidPhone(phone) {
 
 /* Marks a field valid/invalid and collects the error message */
 function check(field, isOk, message, errors) {
+    if (!field) return;
     field.classList.toggle('invalid', !isOk);
     field.setAttribute('aria-invalid', String(!isOk));
     if (!isOk) errors.push(message);
@@ -52,7 +53,7 @@ function showResponse(box, content, isError) {
         const list = document.createElement('ul');
         content.forEach((msg) => {
             const li = document.createElement('li');
-            li.textContent = msg; // textContent keeps user input from being run as HTML
+            li.textContent = msg; // textContent keeps user input safe from HTML injection
             list.appendChild(li);
         });
         box.append(intro, list);
@@ -125,7 +126,7 @@ function initAccordion() {
     function setPanel(header, open) {
         const panel = header.nextElementSibling;
         header.setAttribute('aria-expanded', String(open));
-        panel.style.maxHeight = open ? panel.scrollHeight + 'px' : null;
+        if (panel) panel.style.maxHeight = open ? panel.scrollHeight + 'px' : null;
     }
 
     headers.forEach((header) => {
@@ -167,7 +168,7 @@ function initLightbox() {
     let lastFocused = null;
 
     function show(index) {
-        current = (index + thumbs.length) % thumbs.length; // wraps around
+        current = (index + thumbs.length) % thumbs.length;
         imgEl.src = thumbs[current].currentSrc || thumbs[current].src;
         imgEl.alt = thumbs[current].alt;
         capEl.textContent = thumbs[current].alt;
@@ -212,7 +213,6 @@ function initLightbox() {
 
 /* ========================================================
    6. EVENTS: dynamic content + search + sort (events.html)
-   Cards are built from this array with the DOM, not hard-coded in HTML.
    ======================================================== */
 
 const YQ_EVENTS = [
@@ -296,17 +296,15 @@ function initEvents() {
 
 /* ========================================================
    7. INTERACTIVE MAP (Leaflet + OpenStreetMap, contact.html)
-   NOTE: lng comes from the old Google embed (!2d value). The lat below is
-   approximate. Replace it with the number after !3d in your old embed link.
    ======================================================== */
 
-const YQ_OFFICE = { lat: -33.0, lng: 27.7825986 };
+const YQ_OFFICE = { lat: -33.0580487, lng: 27.7825986 };
 
 function initMap() {
     const el = document.getElementById('map');
     if (!el) return;
 
-    if (typeof L === 'undefined') { // Leaflet failed to load (offline etc.)
+    if (typeof L === 'undefined') {
         el.textContent = 'Map unavailable. Our office: Bantry Farm, Cove Ridge, KuGompo City, 5200.';
         return;
     }
@@ -326,7 +324,6 @@ function initMap() {
 
 /* ========================================================
    8. ENQUIRY FORM (enquiry.html)
-   Validate -> send with AJAX (fetch) -> show a response about cost/availability
    ======================================================== */
 
 const ENQUIRY_REPLIES = {
@@ -343,6 +340,16 @@ function initEnquiryForm() {
 
     const box = document.getElementById('enquiry-response');
     const submitBtn = form.querySelector('button[type="submit"]');
+    const messageEl = document.getElementById('message');
+    const charCountEl = document.getElementById('enquiry-char-count');
+
+    // Character counter for textarea
+    if (messageEl && charCountEl) {
+        messageEl.addEventListener('input', () => {
+            const len = messageEl.value.trim().length;
+            charCountEl.textContent = `${len} / 1000`;
+        });
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -350,30 +357,53 @@ function initEnquiryForm() {
         const nameEl = document.getElementById('name');
         const emailEl = document.getElementById('email');
         const typeEl = document.getElementById('enquiry_type');
-        const messageEl = document.getElementById('message');
 
-        const name = nameEl.value.trim();
-        const email = emailEl.value.trim();
-        const type = typeEl.value;
-        const message = messageEl.value.trim();
+        const name = nameEl ? nameEl.value.trim() : '';
+        const email = emailEl ? emailEl.value.trim() : '';
+        const type = typeEl ? typeEl.value : '';
+        const message = messageEl ? messageEl.value.trim() : '';
 
-        const errors = [];
-        check(nameEl, isValidName(name), 'Name must be 2 to 60 letters (spaces, hyphens and apostrophes are allowed).', errors);
-        check(emailEl, isValidEmail(email), 'Enter a valid email address, e.g. name@example.com.', errors);
-        check(typeEl, type !== '', 'Choose how we can help you.', errors);
-        check(messageEl, message.length >= 10 && message.length <= 1000, `Message must be 10 to 1000 characters (currently ${message.length}).`, errors);
+        // Clear previous error states
+        form.querySelectorAll('.form-group').forEach((g) => g.classList.remove('has-error'));
+        if (box) {
+            box.className = 'form-response';
+            box.style.display = 'none';
+        }
 
-        if (errors.length) {
-            showResponse(box, errors, true);
+        let hasError = false;
+
+        if (!isValidName(name)) {
+            document.getElementById('group-enquiry-name')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (!isValidEmail(email)) {
+            document.getElementById('group-enquiry-email')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (type === '') {
+            document.getElementById('group-enquiry-type')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (message.length < 10 || message.length > 1000) {
+            document.getElementById('group-enquiry-message')?.classList.add('has-error');
+            hasError = true;
+        }
+
+        if (hasError) {
+            if (box) {
+                box.textContent = 'Please fix the highlighted fields above before submitting.';
+                box.classList.add('error');
+                box.style.display = 'block';
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
             return;
         }
 
-        // AJAX: send the data without reloading the page.
-        // jsonplaceholder is a free testing API that echoes the data back.
-        // For a live site, swap the URL for a form service such as Formspree.
-        const originalLabel = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
+        const originalLabel = submitBtn ? submitBtn.textContent : 'Submit';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
 
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
@@ -384,74 +414,95 @@ function initEnquiryForm() {
             if (!response.ok) throw new Error('Request failed with status ' + response.status);
 
             const reply = (ENQUIRY_REPLIES[type] || ENQUIRY_REPLIES.general)(name);
-            showResponse(box, reply, false);
+            if (box) {
+                box.textContent = reply;
+                box.classList.add('success');
+                box.style.display = 'block';
+            }
             form.reset();
+            if (charCountEl) charCountEl.textContent = '0 / 1000';
         } catch (err) {
-            showResponse(box, 'Sorry, we could not send your enquiry right now. Please check your connection and try again, or use our Contact page.', true);
+            if (box) {
+                box.textContent = 'Sorry, we could not send your enquiry right now. Please check your connection and try again.';
+                box.classList.add('error');
+                box.style.display = 'block';
+            }
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalLabel;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+            }
         }
     });
 }
 
 /* ========================================================
    9. CONTACT FORM (contact.html)
-   Validate -> compile into an email -> user sends it to the recipient below
    ======================================================== */
 
-const CONTACT_RECIPIENT = 'YouthQuake@mandelac.za'; // same address shown on the Contact page
+const CONTACT_RECIPIENT = 'YouthQuake@mandelac.za';
 
 function initContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
 
     const box = document.getElementById('contact-response');
+    const messageEl = document.getElementById('contact-message');
+    const charCountEl = document.getElementById('char-count');
+
+    // Live character counter for the message textarea
+    if (messageEl && charCountEl) {
+        messageEl.addEventListener('input', () => {
+            const len = messageEl.value.trim().length;
+            charCountEl.textContent = `${len} / 3000`;
+        });
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const nameEl = document.getElementById('contact-name');
         const emailEl = document.getElementById('contact-email');
-        const phoneEl = document.getElementById('contact-phone'); // optional field
         const typeEl = document.getElementById('message_type');
-        const messageEl = document.getElementById('contact-message');
+        const subjectEl = document.getElementById('contact-subject');
 
-        const name = nameEl.value.trim();
-        const email = emailEl.value.trim();
-        const phone = phoneEl ? phoneEl.value.trim() : '';
-        const type = typeEl.value;
-        const message = messageEl.value.trim();
+        const name = nameEl ? nameEl.value.trim() : '';
+        const email = emailEl ? emailEl.value.trim() : '';
+        const type = typeEl ? typeEl.value : '';
+        const subjectText = subjectEl ? subjectEl.value.trim() : '';
+        const message = messageEl ? messageEl.value.trim() : '';
 
         const errors = [];
         check(nameEl, isValidName(name), 'Name must be 2 to 60 letters (spaces, hyphens and apostrophes are allowed).', errors);
         check(emailEl, isValidEmail(email), 'Enter a valid email address, e.g. name@example.com.', errors);
-        if (phoneEl) {
-            check(phoneEl, phone === '' || isValidPhone(phone), 'Phone number must look like 078 651 0460 or +27 78 651 0460.', errors);
+        check(typeEl, type !== '', 'Choose who you are / message type.', errors);
+        
+        if (subjectEl) {
+            check(subjectEl, subjectText.length >= 2, 'Subject must be at least 2 characters long.', errors);
         }
-        check(typeEl, type !== '', 'Choose the type of message.', errors);
-        check(messageEl, message.length >= 10 && message.length <= 1000, `Message must be 10 to 1000 characters (currently ${message.length}).`, errors);
+        
+        check(messageEl, message.length >= 10 && message.length <= 3000, `Message must be 10 to 3000 characters (currently ${message.length}).`, errors);
 
         if (errors.length) {
             showResponse(box, errors, true);
             return;
         }
 
-        // Compile the validated input into an email
-        const subject = `[${type}] Message from ${name}`;
+        // Compile input into email mailto action
+        const subject = `[${type}] ${subjectText || 'Message from ' + name}`;
         const body = [
             `Name: ${name}`,
             `Email: ${email}`,
-            phone ? `Phone: ${phone}` : null,
             `Message type: ${type}`,
+            `Subject: ${subjectText}`,
             '',
             'Message:',
             message
-        ].filter((line) => line !== null).join('\n');
+        ].join('\n');
 
         const mailto = `mailto:${CONTACT_RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-        showResponse(box, `Thanks, ${name}! Your message has been compiled. Your email app should open so you can send it to ${CONTACT_RECIPIENT}.`, false);
+        showResponse(box, `Thanks, ${name}! Your message has been validated. Your email app should open so you can send it to ${CONTACT_RECIPIENT}.`, false);
 
         const fallback = document.createElement('a');
         fallback.href = mailto;
@@ -460,5 +511,113 @@ function initContactForm() {
 
         window.location.href = mailto;
         form.reset();
+        if (charCountEl) charCountEl.textContent = '0 / 3000';
     });
+
+    /* ========================================================
+   CONTACT FORM VALIDATION & SUBMISSION (contact.html)
+   ======================================================== */
+
+const CONTACT_RECIPIENT = 'YouthQuake@mandelac.za';
+
+function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    const box = document.getElementById('contact-response');
+    const messageEl = document.getElementById('contact-message');
+    const charCountEl = document.getElementById('char-count');
+
+    // Live character count listener for the message textarea
+    if (messageEl && charCountEl) {
+        messageEl.addEventListener('input', () => {
+            const len = messageEl.value.trim().length;
+            charCountEl.textContent = `${len} / 3000`;
+        });
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const nameEl = document.getElementById('contact-name');
+        const emailEl = document.getElementById('contact-email');
+        const typeEl = document.getElementById('message_type');
+        const subjectEl = document.getElementById('contact-subject');
+
+        const name = nameEl ? nameEl.value.trim() : '';
+        const email = emailEl ? emailEl.value.trim() : '';
+        const type = typeEl ? typeEl.value : '';
+        const subjectText = subjectEl ? subjectEl.value.trim() : '';
+        const message = messageEl ? messageEl.value.trim() : '';
+
+        // Reset previous error classes on all form groups
+        form.querySelectorAll('.form-group').forEach((group) => {
+            group.classList.remove('has-error');
+        });
+        if (box) {
+            box.className = 'form-response';
+            box.style.display = 'none';
+        }
+
+        let hasError = false;
+
+        // Field-by-field validation checks
+        if (!isValidName(name)) {
+            document.getElementById('group-name')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (!isValidEmail(email)) {
+            document.getElementById('group-email')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (type === '') {
+            document.getElementById('group-type')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (subjectEl && subjectText.length < 2) {
+            document.getElementById('group-subject')?.classList.add('has-error');
+            hasError = true;
+        }
+        if (message.length < 10 || message.length > 3000) {
+            document.getElementById('group-message')?.classList.add('has-error');
+            hasError = true;
+        }
+
+        // If errors exist, stop and display feedback box
+        if (hasError) {
+            if (box) {
+                box.textContent = 'Please fix the highlighted fields above before submitting.';
+                box.classList.add('error');
+                box.style.display = 'block';
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            return;
+        }
+
+        // Compile input into email mailto action
+        const subject = `[${type}] ${subjectText || 'Message from ' + name}`;
+        const body = [
+            `Name: ${name}`,
+            `Email: ${email}`,
+            `Message type: ${type}`,
+            `Subject: ${subjectText}`,
+            '',
+            'Message:',
+            message
+        ].join('\n');
+
+        const mailto = `mailto:${CONTACT_RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        if (box) {
+            box.textContent = `Thanks, ${name}! Your message has been validated. Opening your email app to send to ${CONTACT_RECIPIENT}...`;
+            box.classList.add('success');
+            box.style.display = 'block';
+        }
+
+        // Trigger mail client fallback
+        window.location.href = mailto;
+        form.reset();
+        if (charCountEl) charCountEl.textContent = '0 / 3000';
+    });
+}
 }
