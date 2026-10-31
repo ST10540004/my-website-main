@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- Core SEO Meta Tags -->
+    <!-- Primary SEO Meta Tags -->
     <title>About Youth Quake NPO | Our Story, Mission & Leadership</title>
     <meta name="description" content="Founded in 1998 in the Eastern Cape, Youth Quake NPO addresses socio-economic challenges facing young people through education, mentoring, and community leadership.">
-    <meta name="keywords" content="Youth Quake NPO, youth empowerment Eastern Cape, KuGompo City NPO, youth mentorship South Africa, school outreach, leadership development">
+    <meta name="keywords" content="Youth Quake NPO, about Youth Quake, youth empowerment Eastern Cape, KuGompo City NPO, youth mentorship South Africa, leadership team">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://YOUR-SITE-URL/pages/about.html">
+    <link rel="canonical" href="https://YOUR-SITE-URL/Pages/about.html">
 
-    <!-- Open Graph / Social Media Meta Tags -->
+    <!-- Open Graph / Facebook Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="About Youth Quake NPO | Shaping Futures Through Youth Empowerment">
     <meta property="og:description" content="Discover how Youth Quake NPO equips and mobilises young people across the Eastern Cape through education, mentorship, and community action.">
+    <meta property="og:url" content="https://YOUR-SITE-URL/Pages/about.html">
     <meta property="og:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
-    <meta property="og:url" content="https://YOUR-SITE-URL/pages/about.html">
     <meta property="og:site_name" content="Youth Quake NPO">
 
     <!-- Twitter Card Meta Tags -->
@@ -25,10 +25,10 @@
     <meta name="twitter:description" content="Empowering youth through education, mentorship, and leadership development since 1998.">
     <meta name="twitter:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
 
-    <!-- External Stylesheet -->
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="../Assets/CSS/style.css">
 
-    <!-- JSON-LD Structured Data for Search Engines -->
+    <!-- Structured Data (Schema.org JSON-LD) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -50,22 +50,15 @@
             "addressRegion": "Eastern Cape",
             "postalCode": "5200",
             "addressCountry": "ZA"
-        },
-        "knowsAbout": [
-            "Youth Empowerment",
-            "Mentorship Programs",
-            "School Outreach",
-            "Community Development"
-        ]
+        }
     }
     </script>
 </head>
-
 <body>
 
     <header>
-        <a href="index.html" class="logo">Youth Quake <span>NPO</span></a>
-        <nav>
+        <a href="../index.html" class="logo">Youth Quake <span>NPO</span></a>
+        <nav aria-label="Main Navigation">
             <a href="../index.html">Home</a>
             <a href="./about.html">About</a>
             <a href="./programs.html">Programs</a>
@@ -78,12 +71,19 @@
     </header>
 
     <main>
-        <section class="page-intro">
+        <!-- Hero & Intro Section with Search Engine Bar -->
+        <section class="page-intro" style="text-align: center; padding: 2rem 1rem;">
             <p class="eyebrow">About Us</p>
             <h1>Built to shape futures through youth mobilisation, education, and mentoring.</h1>
             <p>Youth Quake was established in 1998, born from the need to address the socio-economic issues facing young people. We bring together volunteers, students, and young professionals to influence schools, communities, and future leaders across South Africa.</p>
+
+            <!-- Search Bar (Matching Reference Layout) -->
+            <div class="search-container" style="max-width: 600px; margin: 1.5rem auto;">
+                <input type="text" id="about-search" placeholder="Search about our story, pillars, or leadership team..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-border, #ccc); border-radius: var(--radius, 8px); font-size: 1rem;">
+            </div>
         </section>
 
+        <!-- Our Story Section -->
         <section class="story">
             <h2>Our Story &amp; Pillars</h2>
             <ul>
@@ -93,6 +93,7 @@
             </ul>
         </section>
 
+        <!-- Leadership Team Section -->
         <section class="team">
             <h2>Leadership Team</h2>
             <div class="team-grid">
@@ -114,11 +115,13 @@
             </div>
         </section>
 
+        <!-- Partners Section -->
         <section class="partners">
             <h2>Our Key Partners</h2>
             <p>Gradesmatch &middot; SITA &middot; Department of Education</p>
         </section>
 
+        <!-- Footprint Section -->
         <section class="footprint">
             <h2>Locally Rooted, Globally Visible</h2>
             <ul>
@@ -128,6 +131,7 @@
             </ul>
         </section>
 
+        <!-- Profile Download -->
         <section class="profile-download">
             <a href="../Assets/youth-quake-profile.pdf" class="btn" download>Download Our Profile (PDF)</a>
         </section>
@@ -144,6 +148,7 @@
         </p>
     </footer>
 
+    <!-- Script File -->
     <script src="../js/script.js" defer></script>
 
 </body>
