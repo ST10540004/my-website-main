@@ -1,22 +1,23 @@
 /* ========================================================
-   YOUTH QUAKE — script.js
+   YOUTH QUAKE NPO - CENTRALIZED JAVASCRIPT SUITE
    ======================================================== */
 
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
+    initSiteSearch();
     initAccordion();
     initLightbox();
     initEvents();
-    initScrollAnimations(); // after initEvents so rendered cards are included
+    initScrollAnimations();
     initMap();
     initEnquiryForm();
     initContactForm();
 });
 
 /* ========================================================
-   1. HELPERS
+   1. HELPERS & VALIDATION
    ======================================================== */
 
 function isValidName(name) {
@@ -27,77 +28,182 @@ function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-/* South African numbers: 0786510460 or +27786510460 (spaces and dashes ignored) */
 function isValidPhone(phone) {
     return /^(\+27|0)\d{9}$/.test(phone.replace(/[\s-]/g, ''));
 }
 
-/* Marks a field valid/invalid and collects the error message */
-function check(field, isOk, message, errors) {
-    if (!field) return;
-    field.classList.toggle('invalid', !isOk);
-    field.setAttribute('aria-invalid', String(!isOk));
-    if (!isOk) errors.push(message);
-}
-
-/* Shows a success or error message. `content` can be a string or an array of strings. */
-function showResponse(box, content, isError) {
-    if (!box) return;
-    box.replaceChildren();
-    box.className = 'form-response ' + (isError ? 'error' : 'success');
-    box.setAttribute('role', isError ? 'alert' : 'status');
-
-    if (Array.isArray(content)) {
-        const intro = document.createElement('p');
-        intro.textContent = 'Please fix the following before submitting:';
-        const list = document.createElement('ul');
-        content.forEach((msg) => {
-            const li = document.createElement('li');
-            li.textContent = msg; // textContent keeps user input safe from HTML injection
-            list.appendChild(li);
-        });
-        box.append(intro, list);
-    } else {
-        const p = document.createElement('p');
-        p.textContent = content;
-        box.appendChild(p);
-    }
-
-    box.style.display = 'block';
-    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
 /* ========================================================
-   2. DARK / LIGHT THEME (header button #theme-toggle)
+   2. DARK / LIGHT THEME TOGGLE
    ======================================================== */
 
 function initThemeToggle() {
     let saved = null;
-    try { saved = localStorage.getItem('yq-theme'); } catch (err) { /* storage unavailable */ }
-    if (saved === 'dark') document.body.classList.add('dark');
+    try { saved = localStorage.getItem('yq-theme'); } catch (err) { /* ignore */ }
+    if (saved === 'dark' || saved === 'dark-mode') document.body.classList.add('dark-mode');
 
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
 
-    btn.setAttribute('aria-pressed', String(document.body.classList.contains('dark')));
+    btn.setAttribute('aria-pressed', String(document.body.classList.contains('dark-mode')));
     btn.addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('dark');
+        const isDark = document.body.classList.toggle('dark-mode');
         btn.setAttribute('aria-pressed', String(isDark));
         try { localStorage.setItem('yq-theme', isDark ? 'dark' : 'light'); } catch (err) { /* ignore */ }
     });
 }
 
 /* ========================================================
-   3. SCROLL ANIMATIONS (cards fade/slide in as they appear)
+   3. UNIVERSAL LIVE SEARCH FUNCTIONALITY
+   ======================================================== */
+
+function initSiteSearch() {
+    // Helper: Display "No results" message dynamically
+    function toggleNoResultsMsg(container, show, query) {
+        let msg = container.querySelector('.no-results-msg');
+        if (show) {
+            if (!msg) {
+                msg = document.createElement('p');
+                msg.className = 'no-results-msg';
+                msg.style.cssText = 'text-align:center; padding: 2rem; color: var(--color-primary, #d9480f); font-weight: 600; font-size: 1.1rem;';
+                container.appendChild(msg);
+            }
+            msg.textContent = `No results found matching "${query}".`;
+            msg.style.display = 'block';
+        } else if (msg) {
+            msg.style.display = 'none';
+        }
+    }
+
+    // 1. Index Page Search (#site-search)
+    const indexSearch = document.getElementById('site-search');
+    if (indexSearch) {
+        indexSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const welcomeSec = document.querySelector('.welcome-section');
+            if (!welcomeSec) return;
+
+            const text = welcomeSec.textContent.toLowerCase();
+            const matches = text.includes(query);
+            
+            toggleNoResultsMsg(welcomeSec, !matches && query !== '', query);
+            
+            const welcomeText = welcomeSec.querySelector('p:not(.no-results-msg)');
+            const welcomeImg = welcomeSec.querySelector('img');
+            if (welcomeText) welcomeText.style.display = (matches || query === '') ? 'block' : 'none';
+            if (welcomeImg) welcomeImg.style.display = (matches || query === '') ? 'block' : 'none';
+        });
+    }
+
+    // 2. About Page Search (#about-search)
+    const aboutSearch = document.getElementById('about-search');
+    if (aboutSearch) {
+        aboutSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const main = document.querySelector('main');
+            if (!main) return;
+
+            let totalVisible = 0;
+            const searchableSections = main.querySelectorAll('section.story, section.team, section.partners, section.footprint');
+            
+            searchableSections.forEach(section => {
+                const sectionText = section.textContent.toLowerCase();
+                if (query === '' || sectionText.includes(query)) {
+                    section.style.display = 'block';
+                    totalVisible++;
+
+                    const teamCards = section.querySelectorAll('.team-card');
+                    if (teamCards.length > 0) {
+                        teamCards.forEach(card => {
+                            const cardText = card.textContent.toLowerCase();
+                            card.style.display = (query === '' || cardText.includes(query)) ? 'block' : 'none';
+                        });
+                    }
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            toggleNoResultsMsg(main, totalVisible === 0 && query !== '', query);
+        });
+    }
+
+    // 3. Programs Page Search (#programs-search)
+    const programsSearch = document.getElementById('programs-search');
+    if (programsSearch) {
+        programsSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const grid = document.querySelector('.programs-grid');
+            if (!grid) return;
+
+            let matchCount = 0;
+            grid.querySelectorAll('.program-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const matches = query === '' || text.includes(query);
+                card.style.display = matches ? 'block' : 'none';
+                if (matches) matchCount++;
+            });
+
+            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
+        });
+    }
+
+    // 4. Gallery / Events Page Search (#gallery-search / #events-search)
+    const gallerySearch = document.getElementById('gallery-search') || document.getElementById('events-search');
+    if (gallerySearch) {
+        gallerySearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const grid = document.querySelector('.gallery-grid');
+            if (!grid) return;
+
+            let matchCount = 0;
+            grid.querySelectorAll('.gallery-item').forEach(item => {
+                const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
+                const matches = query === '' || altText.includes(query);
+                item.style.display = matches ? 'block' : 'none';
+                if (matches) matchCount++;
+            });
+
+            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
+        });
+    }
+
+    // 5. Contact Page Search (#contact-search)
+    const contactSearch = document.getElementById('contact-search');
+    if (contactSearch) {
+        contactSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const boxes = document.querySelectorAll('.searchable-box');
+
+            boxes.forEach(box => {
+                const text = box.textContent.toLowerCase();
+                box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
+            });
+        });
+    }
+
+    // 6. Enquiry Page Search (#enquiry-page-search)
+    const enquiryPageSearch = document.getElementById('enquiry-page-search');
+    if (enquiryPageSearch) {
+        enquiryPageSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const box = document.querySelector('.enquiry-form-section.searchable-box');
+            if (box) {
+                const text = box.textContent.toLowerCase();
+                box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
+            }
+        });
+    }
+}
+
+/* ========================================================
+   4. SCROLL ANIMATIONS
    ======================================================== */
 
 function initScrollAnimations() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion || !('IntersectionObserver' in window)) return;
 
-    const targets = document.querySelectorAll(
-        '.program-card, .team-card, .split-panel > div, .partners, .event-card'
-    );
+    const targets = document.querySelectorAll('.program-card, .team-card, .split-panel > div, .partners, .event-card');
     if (!targets.length) return;
 
     const observer = new IntersectionObserver((entries, obs) => {
@@ -116,7 +222,7 @@ function initScrollAnimations() {
 }
 
 /* ========================================================
-   4. ACCORDION (FAQ on programs.html)
+   5. ACCORDION (FAQ on programs.html)
    ======================================================== */
 
 function initAccordion() {
@@ -132,21 +238,20 @@ function initAccordion() {
     headers.forEach((header) => {
         header.addEventListener('click', () => {
             const wasOpen = header.getAttribute('aria-expanded') === 'true';
-            headers.forEach((h) => setPanel(h, false)); // only one panel open at a time
+            headers.forEach((h) => setPanel(h, false));
             if (!wasOpen) setPanel(header, true);
         });
     });
 }
 
 /* ========================================================
-   5. GALLERY LIGHTBOX (gallery.html)
+   6. GALLERY LIGHTBOX MODAL
    ======================================================== */
 
 function initLightbox() {
     const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
     if (!thumbs.length) return;
 
-    // Dynamically build lightbox modal in DOM
     const overlay = document.createElement('div');
     overlay.className = 'lightbox';
     overlay.hidden = true;
@@ -168,14 +273,25 @@ function initLightbox() {
     let current = 0;
     let lastFocused = null;
 
-    function show(index) {
-        current = (index + thumbs.length) % thumbs.length;
-        imgEl.src = thumbs[current].currentSrc || thumbs[current].src;
-        imgEl.alt = thumbs[current].alt;
-        capEl.textContent = thumbs[current].alt;
+    function getVisibleThumbs() {
+        return thumbs.filter(t => t.style.display !== 'none');
     }
 
-    function open(index) {
+    function show(index) {
+        const visibleThumbs = getVisibleThumbs();
+        if (!visibleThumbs.length) return;
+        
+        current = (index + visibleThumbs.length) % visibleThumbs.length;
+        imgEl.src = visibleThumbs[current].currentSrc || visibleThumbs[current].src;
+        imgEl.alt = visibleThumbs[current].alt;
+        capEl.textContent = visibleThumbs[current].alt;
+    }
+
+    function open(thumb) {
+        const visibleThumbs = getVisibleThumbs();
+        const index = visibleThumbs.indexOf(thumb);
+        if (index === -1) return;
+
         lastFocused = document.activeElement;
         show(index);
         overlay.hidden = false;
@@ -190,14 +306,14 @@ function initLightbox() {
         if (lastFocused) lastFocused.focus();
     }
 
-    thumbs.forEach((thumb, i) => {
+    thumbs.forEach((thumb) => {
         thumb.tabIndex = 0;
         thumb.setAttribute('role', 'button');
-        thumb.addEventListener('click', () => open(i));
+        thumb.addEventListener('click', () => open(thumb));
         thumb.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                open(i);
+                open(thumb);
             }
         });
     });
@@ -218,7 +334,7 @@ function initLightbox() {
 }
 
 /* ========================================================
-   6. EVENTS: dynamic content + search + sort (events.html)
+   7. EVENTS DYNAMIC BUILDER
    ======================================================== */
 
 const YQ_EVENTS = [
@@ -247,7 +363,6 @@ function buildEventCard(ev) {
     card.className = 'event-card';
 
     const info = document.createElement('div');
-
     const title = document.createElement('h2');
     title.textContent = ev.title;
 
@@ -301,7 +416,7 @@ function initEvents() {
 }
 
 /* ========================================================
-   7. INTERACTIVE MAP (Leaflet + OpenStreetMap, contact.html)
+   8. INTERACTIVE MAP (Leaflet + OpenStreetMap)
    ======================================================== */
 
 const YQ_OFFICE = { lat: -33.0580487, lng: 27.7825986 };
@@ -329,7 +444,7 @@ function initMap() {
 }
 
 /* ========================================================
-   8. ENQUIRY FORM (enquiry.html)
+   9. ENQUIRY FORM LOGIC
    ======================================================== */
 
 const ENQUIRY_REPLIES = {
@@ -349,7 +464,6 @@ function initEnquiryForm() {
     const messageEl = document.getElementById('message');
     const charCountEl = document.getElementById('enquiry-char-count');
 
-    // Character counter for textarea
     if (messageEl && charCountEl) {
         messageEl.addEventListener('input', () => {
             const len = messageEl.value.trim().length;
@@ -369,7 +483,6 @@ function initEnquiryForm() {
         const type = typeEl ? typeEl.value : '';
         const message = messageEl ? messageEl.value.trim() : '';
 
-        // Clear previous error states
         form.querySelectorAll('.form-group').forEach((g) => g.classList.remove('has-error'));
         if (box) {
             box.className = 'form-response';
@@ -377,23 +490,10 @@ function initEnquiryForm() {
         }
 
         let hasError = false;
-
-        if (!isValidName(name)) {
-            document.getElementById('group-enquiry-name')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (!isValidEmail(email)) {
-            document.getElementById('group-enquiry-email')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (type === '') {
-            document.getElementById('group-enquiry-type')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (message.length < 10 || message.length > 1000) {
-            document.getElementById('group-enquiry-message')?.classList.add('has-error');
-            hasError = true;
-        }
+        if (!isValidName(name)) { document.getElementById('group-enquiry-name')?.classList.add('has-error'); hasError = true; }
+        if (!isValidEmail(email)) { document.getElementById('group-enquiry-email')?.classList.add('has-error'); hasError = true; }
+        if (type === '') { document.getElementById('group-enquiry-type')?.classList.add('has-error'); hasError = true; }
+        if (message.length < 10 || message.length > 1000) { document.getElementById('group-enquiry-message')?.classList.add('has-error'); hasError = true; }
 
         if (hasError) {
             if (box) {
@@ -443,7 +543,7 @@ function initEnquiryForm() {
 }
 
 /* ========================================================
-   9. CONTACT FORM (contact.html)
+   10. CONTACT FORM LOGIC
    ======================================================== */
 
 const CONTACT_RECIPIENT = 'YouthQuake@mandelac.za';
@@ -456,7 +556,6 @@ function initContactForm() {
     const messageEl = document.getElementById('contact-message');
     const charCountEl = document.getElementById('char-count');
 
-    // Live character counter for the message textarea
     if (messageEl && charCountEl) {
         messageEl.addEventListener('input', () => {
             const len = messageEl.value.trim().length;
@@ -478,85 +577,6 @@ function initContactForm() {
         const subjectText = subjectEl ? subjectEl.value.trim() : '';
         const message = messageEl ? messageEl.value.trim() : '';
 
-        const errors = [];
-        check(nameEl, isValidName(name), 'Name must be 2 to 60 letters (spaces, hyphens and apostrophes are allowed).', errors);
-        check(emailEl, isValidEmail(email), 'Enter a valid email address, e.g. name@example.com.', errors);
-        check(typeEl, type !== '', 'Choose who you are / message type.', errors);
-        
-        if (subjectEl) {
-            check(subjectEl, subjectText.length >= 2, 'Subject must be at least 2 characters long.', errors);
-        }
-        
-        check(messageEl, message.length >= 10 && message.length <= 3000, `Message must be 10 to 3000 characters (currently ${message.length}).`, errors);
-
-        if (errors.length) {
-            showResponse(box, errors, true);
-            return;
-        }
-
-        // Compile input into email mailto action
-        const subject = `[${type}] ${subjectText || 'Message from ' + name}`;
-        const body = [
-            `Name: ${name}`,
-            `Email: ${email}`,
-            `Message type: ${type}`,
-            `Subject: ${subjectText}`,
-            '',
-            'Message:',
-            message
-        ].join('\n');
-
-        const mailto = `mailto:${CONTACT_RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        showResponse(box, `Thanks, ${name}! Your message has been validated. Your email app should open so you can send it to ${CONTACT_RECIPIENT}.`, false);
-
-        const fallback = document.createElement('a');
-        fallback.href = mailto;
-        fallback.textContent = 'Email app did not open? Click here to send the message.';
-        box.appendChild(fallback);
-
-        window.location.href = mailto;
-        form.reset();
-        if (charCountEl) charCountEl.textContent = '0 / 3000';
-    });
-
-    /* ========================================================
-   CONTACT FORM VALIDATION & SUBMISSION (contact.html)
-   ======================================================== */
-
-const CONTACT_RECIPIENT = 'YouthQuake@mandelac.za';
-
-function initContactForm() {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
-
-    const box = document.getElementById('contact-response');
-    const messageEl = document.getElementById('contact-message');
-    const charCountEl = document.getElementById('char-count');
-
-    // Live character count listener for the message textarea
-    if (messageEl && charCountEl) {
-        messageEl.addEventListener('input', () => {
-            const len = messageEl.value.trim().length;
-            charCountEl.textContent = `${len} / 3000`;
-        });
-    }
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const nameEl = document.getElementById('contact-name');
-        const emailEl = document.getElementById('contact-email');
-        const typeEl = document.getElementById('message_type');
-        const subjectEl = document.getElementById('contact-subject');
-
-        const name = nameEl ? nameEl.value.trim() : '';
-        const email = emailEl ? emailEl.value.trim() : '';
-        const type = typeEl ? typeEl.value : '';
-        const subjectText = subjectEl ? subjectEl.value.trim() : '';
-        const message = messageEl ? messageEl.value.trim() : '';
-
-        // Reset previous error classes on all form groups
         form.querySelectorAll('.form-group').forEach((group) => {
             group.classList.remove('has-error');
         });
@@ -566,30 +586,12 @@ function initContactForm() {
         }
 
         let hasError = false;
+        if (!isValidName(name)) { document.getElementById('group-name')?.classList.add('has-error'); hasError = true; }
+        if (!isValidEmail(email)) { document.getElementById('group-email')?.classList.add('has-error'); hasError = true; }
+        if (type === '') { document.getElementById('group-type')?.classList.add('has-error'); hasError = true; }
+        if (subjectEl && subjectText.length < 2) { document.getElementById('group-subject')?.classList.add('has-error'); hasError = true; }
+        if (message.length < 10 || message.length > 3000) { document.getElementById('group-message')?.classList.add('has-error'); hasError = true; }
 
-        // Field-by-field validation checks
-        if (!isValidName(name)) {
-            document.getElementById('group-name')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (!isValidEmail(email)) {
-            document.getElementById('group-email')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (type === '') {
-            document.getElementById('group-type')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (subjectEl && subjectText.length < 2) {
-            document.getElementById('group-subject')?.classList.add('has-error');
-            hasError = true;
-        }
-        if (message.length < 10 || message.length > 3000) {
-            document.getElementById('group-message')?.classList.add('has-error');
-            hasError = true;
-        }
-
-        // If errors exist, stop and display feedback box
         if (hasError) {
             if (box) {
                 box.textContent = 'Please fix the highlighted fields above before submitting.';
@@ -600,7 +602,6 @@ function initContactForm() {
             return;
         }
 
-        // Compile input into email mailto action
         const subject = `[${type}] ${subjectText || 'Message from ' + name}`;
         const body = [
             `Name: ${name}`,
@@ -620,543 +621,8 @@ function initContactForm() {
             box.style.display = 'block';
         }
 
-        // Trigger mail client fallback
         window.location.href = mailto;
         form.reset();
         if (charCountEl) charCountEl.textContent = '0 / 3000';
     });
-}
-
-/* ========================================================
-   YOUTH QUAKE NPO - GALLERY & SEARCH SUITE
-   ======================================================== */
-
-document.addEventListener('DOMContentLoaded', () => {
-    initGallerySearch();
-    initLightbox();
-});
-
-/* ---------- 1. GALLERY SEARCH FILTERING ---------- */
-function initGallerySearch() {
-    const searchInput = document.getElementById('gallery-search');
-    const items = document.querySelectorAll('.gallery-item');
-
-    if (!searchInput || !items.length) return;
-
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-
-        items.forEach((item) => {
-            const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
-            if (altText.includes(query)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
-    /* ---------- CONTACT PAGE SEARCH FILTERING ---------- */
-const contactSearch = document.getElementById('contact-search');
-if (contactSearch) {
-    contactSearch.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        const boxes = document.querySelectorAll('.searchable-box');
-
-        boxes.forEach(box => {
-            const text = box.textContent.toLowerCase();
-            box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
-        });
-    });
-}
-}
-
-/* ---------- 2. LIGHTBOX INTERACTIVE MODAL ---------- */
-function initLightbox() {
-    const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
-    if (!thumbs.length) return;
-
-    // Dynamically generate Lightbox overlay DOM structure
-    const overlay = document.createElement('div');
-    overlay.className = 'lightbox';
-    overlay.hidden = true;
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Image viewer');
-    overlay.innerHTML = `
-        <button class="lightbox-close" aria-label="Close image viewer">&times;</button>
-        <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&#10094;</button>
-        <figure class="lightbox-figure">
-            <img class="lightbox-img" alt="">
-            <figcaption class="lightbox-caption"></figcaption>
-        </figure>
-        <button class="lightbox-nav lightbox-next" aria-label="Next image">&#10095;</button>`;
-    document.body.appendChild(overlay);
-
-    const imgEl = overlay.querySelector('.lightbox-img');
-    const capEl = overlay.querySelector('.lightbox-caption');
-    let current = 0;
-    let lastFocused = null;
-
-    function getVisibleThumbs() {
-        return thumbs.filter(t => t.style.display !== 'none');
-    }
-
-    function show(index) {
-        const visibleThumbs = getVisibleThumbs();
-        if (!visibleThumbs.length) return;
-        
-        current = (index + visibleThumbs.length) % visibleThumbs.length;
-        imgEl.src = visibleThumbs[current].currentSrc || visibleThumbs[current].src;
-        imgEl.alt = visibleThumbs[current].alt;
-        capEl.textContent = visibleThumbs[current].alt;
-    }
-
-    function open(item) {
-        const visibleThumbs = getVisibleThumbs();
-        const index = visibleThumbs.indexOf(item);
-        if (index === -1) return;
-
-        lastFocused = document.activeElement;
-        show(index);
-        overlay.hidden = false;
-        document.body.classList.add('no-scroll');
-        overlay.querySelector('.lightbox-close').focus();
-    }
-
-    function close() {
-        overlay.hidden = true;
-        document.body.classList.remove('no-scroll');
-        imgEl.removeAttribute('src');
-        if (lastFocused) lastFocused.focus();
-    }
-
-    thumbs.forEach((thumb) => {
-        thumb.tabIndex = 0;
-        thumb.setAttribute('role', 'button');
-        thumb.addEventListener('click', () => open(thumb));
-        thumb.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                open(thumb);
-            }
-        });
-    });
-
-    overlay.querySelector('.lightbox-close').addEventListener('click', close);
-    overlay.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
-    overlay.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) close();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (overlay.hidden) return;
-        if (e.key === 'Escape') close();
-        if (e.key === 'ArrowLeft') show(current - 1);
-        if (e.key === 'ArrowRight') show(current + 1);
-    });
-}
-/* ========================================================
-   YOUTH QUAKE NPO - CENTRALIZED JAVASCRIPT SUITE
-   ======================================================== */
-
-document.addEventListener('DOMContentLoaded', () => {
-    initThemeToggle();
-    initSiteSearch();
-    initLightbox();
-    initContactForm();
-    initEnquiryForm();
-});
-
-/* ---------- 1. DARK / LIGHT THEME TOGGLE ---------- */
-function initThemeToggle() {
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (!toggleBtn) return;
-
-    // Check saved theme or preference
-    const savedTheme = localStorage.getItem('yq-theme');
-    if (savedTheme) {
-        document.body.classList.toggle('dark-mode', savedTheme === 'dark');
-    }
-
-    toggleBtn.addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('dark-mode');
-        localStorage.setItem('yq-theme', isDark ? 'dark' : 'light');
-    });
-}
-
-/* ---------- 2. UNIVERSAL LIVE SEARCH FUNCTIONALITY ---------- */
-function initSiteSearch() {
-    // 1. Index Page Search (#site-search)
-    const indexSearch = document.getElementById('site-search');
-    if (indexSearch) {
-        indexSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const welcomeText = document.querySelector('.welcome-section p');
-            const welcomeImg = document.querySelector('.welcome-section img');
-
-            if (welcomeText) {
-                const text = welcomeText.textContent.toLowerCase();
-                const matches = text.includes(query);
-                welcomeText.style.opacity = matches || query === '' ? '1' : '0.3';
-                if (welcomeImg) welcomeImg.style.opacity = matches || query === '' ? '1' : '0.3';
-            }
-        });
-    }
-
-    /* ---------- 2. UNIVERSAL LIVE SEARCH FUNCTIONALITY ---------- */
-function initSiteSearch() {
-
-    // Helper: Display "No results" message dynamically
-    function toggleNoResultsMsg(container, show, query) {
-        let msg = container.querySelector('.no-results-msg');
-        if (show) {
-            if (!msg) {
-                msg = document.createElement('p');
-                msg.className = 'no-results-msg';
-                msg.style.cssText = 'text-align:center; padding: 2rem; color: var(--color-primary, #d9480f); font-weight: 600; font-size: 1.1rem;';
-                container.appendChild(msg);
-            }
-            msg.textContent = `No results found matching "${query}".`;
-            msg.style.display = 'block';
-        } else if (msg) {
-            msg.style.display = 'none';
-        }
-    }
-
-    // 1. INDEX PAGE SEARCH (#site-search)
-    const indexSearch = document.getElementById('site-search');
-    if (indexSearch) {
-        indexSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const welcomeSec = document.querySelector('.welcome-section');
-            if (!welcomeSec) return;
-
-            const text = welcomeSec.textContent.toLowerCase();
-            const matches = text.includes(query);
-            
-            toggleNoResultsMsg(welcomeSec, !matches && query !== '', query);
-            
-            const welcomeText = welcomeSec.querySelector('p:not(.no-results-msg)');
-            const welcomeImg = welcomeSec.querySelector('img');
-            if (welcomeText) welcomeText.style.display = (matches || query === '') ? 'block' : 'none';
-            if (welcomeImg) welcomeImg.style.display = (matches || query === '') ? 'block' : 'none';
-        });
-    }
-
-    // 2. ABOUT PAGE SEARCH (#about-search)
-    const aboutSearch = document.getElementById('about-search');
-    if (aboutSearch) {
-        aboutSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const main = document.querySelector('main');
-            if (!main) return;
-
-            let totalVisible = 0;
-
-            // Search across content sections (.story, .team, .partners, .footprint)
-            const searchableSections = main.querySelectorAll('section.story, section.team, section.partners, section.footprint');
-            
-            searchableSections.forEach(section => {
-                const sectionText = section.textContent.toLowerCase();
-                if (query === '' || sectionText.includes(query)) {
-                    section.style.display = 'block';
-                    totalVisible++;
-
-                    // Filter sub-cards inside .team-grid if searching leadership team
-                    const teamCards = section.querySelectorAll('.team-card');
-                    if (teamCards.length > 0) {
-                        teamCards.forEach(card => {
-                            const cardText = card.textContent.toLowerCase();
-                            card.style.display = (query === '' || cardText.includes(query)) ? 'block' : 'none';
-                        });
-                    }
-                } else {
-                    section.style.display = 'none';
-                }
-            });
-
-            toggleNoResultsMsg(main, totalVisible === 0 && query !== '', query);
-        });
-    }
-
-    // 3. PROGRAMS PAGE SEARCH (#programs-search)
-    const programsSearch = document.getElementById('programs-search');
-    if (programsSearch) {
-        programsSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const grid = document.querySelector('.programs-grid');
-            if (!grid) return;
-
-            let matchCount = 0;
-            grid.querySelectorAll('.program-card').forEach(card => {
-                const text = card.textContent.toLowerCase();
-                const matches = query === '' || text.includes(query);
-                card.style.display = matches ? 'block' : 'none';
-                if (matches) matchCount++;
-            });
-
-            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
-        });
-    }
-
-    // 4. GALLERY PAGE SEARCH (#gallery-search)
-    const gallerySearch = document.getElementById('gallery-search');
-    if (gallerySearch) {
-        gallerySearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const grid = document.querySelector('.gallery-grid');
-            if (!grid) return;
-
-            let matchCount = 0;
-            grid.querySelectorAll('.gallery-item').forEach(item => {
-                const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
-                const matches = query === '' || altText.includes(query);
-                item.style.display = matches ? 'block' : 'none';
-                if (matches) matchCount++;
-            });
-
-            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
-        });
-    }
-}
-
-    // 3. Programs Page Search (#programs-search)
-    const programsSearch = document.getElementById('programs-search');
-    if (programsSearch) {
-        programsSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            
-            document.querySelectorAll('.program-card').forEach(card => {
-                const text = card.textContent.toLowerCase();
-                card.style.display = text.includes(query) ? 'block' : 'none';
-            });
-        });
-    }
-
-    // 4. Gallery Page Search (#gallery-search)
-    const gallerySearch = document.getElementById('gallery-search');
-    if (gallerySearch) {
-        gallerySearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            
-            document.querySelectorAll('.gallery-item').forEach(item => {
-                const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
-                item.style.display = altText.includes(query) ? 'block' : 'none';
-            });
-        });
-    }
-    /* ---------- ENQUIRY PAGE SEARCH FILTERING ---------- */
-const enquiryPageSearch = document.getElementById('enquiry-page-search');
-if (enquiryPageSearch) {
-    enquiryPageSearch.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        const box = document.querySelector('.enquiry-form-section.searchable-box');
-        if (box) {
-            const text = box.textContent.toLowerCase();
-            box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
-        }
-    });
-}
-}
-
-/* ---------- 3. GALLERY LIGHTBOX MODAL ---------- */
-function initLightbox() {
-    const thumbs = Array.from(document.querySelectorAll('.gallery-item'));
-    if (!thumbs.length) return;
-
-    const overlay = document.createElement('div');
-    overlay.className = 'lightbox';
-    overlay.hidden = true;
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Image viewer');
-    overlay.innerHTML = `
-        <button class="lightbox-close" aria-label="Close image viewer">&times;</button>
-        <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&#10094;</button>
-        <figure class="lightbox-figure">
-            <img class="lightbox-img" alt="">
-            <figcaption class="lightbox-caption"></figcaption>
-        </figure>
-        <button class="lightbox-nav lightbox-next" aria-label="Next image">&#10095;</button>`;
-    document.body.appendChild(overlay);
-
-    const imgEl = overlay.querySelector('.lightbox-img');
-    const capEl = overlay.querySelector('.lightbox-caption');
-    let current = 0;
-
-    function getVisibleThumbs() {
-        return thumbs.filter(t => t.style.display !== 'none');
-    }
-
-    function show(index) {
-        const visibleThumbs = getVisibleThumbs();
-        if (!visibleThumbs.length) return;
-        
-        current = (index + visibleThumbs.length) % visibleThumbs.length;
-        imgEl.src = visibleThumbs[current].currentSrc || visibleThumbs[current].src;
-        imgEl.alt = visibleThumbs[current].alt;
-        capEl.textContent = visibleThumbs[current].alt;
-    }
-
-    function open(item) {
-        const visibleThumbs = getVisibleThumbs();
-        const index = visibleThumbs.indexOf(item);
-        if (index === -1) return;
-
-        show(index);
-        overlay.hidden = false;
-        document.body.classList.add('no-scroll');
-    }
-
-    function close() {
-        overlay.hidden = true;
-        document.body.classList.remove('no-scroll');
-        imgEl.removeAttribute('src');
-    }
-
-    thumbs.forEach(thumb => {
-        thumb.tabIndex = 0;
-        thumb.addEventListener('click', () => open(thumb));
-        thumb.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                open(thumb);
-            }
-        });
-    });
-
-    overlay.querySelector('.lightbox-close').addEventListener('click', close);
-    overlay.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
-    overlay.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-
-    document.addEventListener('keydown', (e) => {
-        if (overlay.hidden) return;
-        if (e.key === 'Escape') close();
-        if (e.key === 'ArrowLeft') show(current - 1);
-        if (e.key === 'ArrowRight') show(current + 1);
-    });
-}
-
-/* ---------- 4. HELPER VALIDATION FUNCTIONS ---------- */
-function isValidName(name) {
-    const re = /^[a-zA-Z\s'-]{2,60}$/;
-    return re.test(name);
-}
-
-function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-/* ---------- 5. CONTACT FORM LOGIC ---------- */
-function initContactForm() {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
-
-    const box = document.getElementById('contact-response');
-    const messageEl = document.getElementById('contact-message');
-    const charCountEl = document.getElementById('char-count');
-
-    if (messageEl && charCountEl) {
-        messageEl.addEventListener('input', () => {
-            charCountEl.textContent = `${messageEl.value.trim().length} / 3000`;
-        });
-    }
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('contact-name')?.value.trim() || '';
-        const email = document.getElementById('contact-email')?.value.trim() || '';
-        const type = document.getElementById('message_type')?.value || '';
-        const subjectText = document.getElementById('contact-subject')?.value.trim() || '';
-        const message = messageEl ? messageEl.value.trim() : '';
-
-        form.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
-
-        let hasError = false;
-        if (!isValidName(name)) { document.getElementById('group-name')?.classList.add('has-error'); hasError = true; }
-        if (!isValidEmail(email)) { document.getElementById('group-email')?.classList.add('has-error'); hasError = true; }
-        if (!type) { document.getElementById('group-type')?.classList.add('has-error'); hasError = true; }
-        if (subjectText.length < 2) { document.getElementById('group-subject')?.classList.add('has-error'); hasError = true; }
-        if (message.length < 10 || message.length > 3000) { document.getElementById('group-message')?.classList.add('has-error'); hasError = true; }
-
-        if (hasError) {
-            if (box) {
-                box.textContent = 'Please fix the highlighted fields above before submitting.';
-                box.className = 'form-response error';
-                box.style.display = 'block';
-            }
-            return;
-        }
-
-        const mailto = `mailto:YouthQuake@mandelac.za?subject=${encodeURIComponent('[' + type + '] ' + subjectText)}&body=${encodeURIComponent(message)}`;
-        window.location.href = mailto;
-    });
-}
-
-/* ---------- 6. ENQUIRY FORM LOGIC ---------- */
-function initEnquiryForm() {
-    const form = document.getElementById('enquiry-form');
-    if (!form) return;
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('name')?.value.trim() || '';
-        const email = document.getElementById('email')?.value.trim() || '';
-        const type = document.getElementById('enquiry_type')?.value || '';
-        const message = document.getElementById('message')?.value.trim() || '';
-
-        form.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
-
-        let hasError = false;
-        if (!isValidName(name)) { document.getElementById('group-enquiry-name')?.classList.add('has-error'); hasError = true; }
-        if (!isValidEmail(email)) { document.getElementById('group-enquiry-email')?.classList.add('has-error'); hasError = true; }
-        if (!type) { document.getElementById('group-enquiry-type')?.classList.add('has-error'); hasError = true; }
-        if (message.length < 10 || message.length > 1000) { document.getElementById('group-enquiry-message')?.classList.add('has-error'); hasError = true; }
-
-        if (!hasError) {
-            const box = document.getElementById('enquiry-response');
-            if (box) {
-                box.textContent = `Thank you, ${name}! Your enquiry regarding ${type} has been received. We will contact you at ${email} shortly.`;
-                box.className = 'form-response success';
-                box.style.display = 'block';
-            }
-            form.reset();
-        }
-    });
-}
-/* ---------- EVENTS / GALLERY SEARCH FILTERING ---------- */
-const eventsSearch = document.getElementById('events-search');
-if (eventsSearch) {
-    eventsSearch.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        const grid = document.querySelector('.gallery-grid');
-        if (!grid) return;
-
-        let matchCount = 0;
-        grid.querySelectorAll('.gallery-item').forEach(item => {
-            const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
-            const matches = query === '' || altText.includes(query);
-            item.style.display = matches ? 'block' : 'none';
-            if (matches) matchCount++;
-        });
-    });
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
 }
