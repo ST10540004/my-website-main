@@ -655,6 +655,19 @@ function initGallerySearch() {
             }
         });
     });
+    /* ---------- CONTACT PAGE SEARCH FILTERING ---------- */
+const contactSearch = document.getElementById('contact-search');
+if (contactSearch) {
+    contactSearch.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const boxes = document.querySelectorAll('.searchable-box');
+
+        boxes.forEach(box => {
+            const text = box.textContent.toLowerCase();
+            box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
+        });
+    });
+}
 }
 
 /* ---------- 2. LIGHTBOX INTERACTIVE MODAL ---------- */
@@ -791,31 +804,122 @@ function initSiteSearch() {
         });
     }
 
-    // 2. About Page Search (#about-search)
+    /* ---------- 2. UNIVERSAL LIVE SEARCH FUNCTIONALITY ---------- */
+function initSiteSearch() {
+
+    // Helper: Display "No results" message dynamically
+    function toggleNoResultsMsg(container, show, query) {
+        let msg = container.querySelector('.no-results-msg');
+        if (show) {
+            if (!msg) {
+                msg = document.createElement('p');
+                msg.className = 'no-results-msg';
+                msg.style.cssText = 'text-align:center; padding: 2rem; color: var(--color-primary, #d9480f); font-weight: 600; font-size: 1.1rem;';
+                container.appendChild(msg);
+            }
+            msg.textContent = `No results found matching "${query}".`;
+            msg.style.display = 'block';
+        } else if (msg) {
+            msg.style.display = 'none';
+        }
+    }
+
+    // 1. INDEX PAGE SEARCH (#site-search)
+    const indexSearch = document.getElementById('site-search');
+    if (indexSearch) {
+        indexSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const welcomeSec = document.querySelector('.welcome-section');
+            if (!welcomeSec) return;
+
+            const text = welcomeSec.textContent.toLowerCase();
+            const matches = text.includes(query);
+            
+            toggleNoResultsMsg(welcomeSec, !matches && query !== '', query);
+            
+            const welcomeText = welcomeSec.querySelector('p:not(.no-results-msg)');
+            const welcomeImg = welcomeSec.querySelector('img');
+            if (welcomeText) welcomeText.style.display = (matches || query === '') ? 'block' : 'none';
+            if (welcomeImg) welcomeImg.style.display = (matches || query === '') ? 'block' : 'none';
+        });
+    }
+
+    // 2. ABOUT PAGE SEARCH (#about-search)
     const aboutSearch = document.getElementById('about-search');
     if (aboutSearch) {
         aboutSearch.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
+            const main = document.querySelector('main');
+            if (!main) return;
+
+            let totalVisible = 0;
+
+            // Search across content sections (.story, .team, .partners, .footprint)
+            const searchableSections = main.querySelectorAll('section.story, section.team, section.partners, section.footprint');
             
-            // Filter Story List Items
-            document.querySelectorAll('.story li').forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'list-item' : 'none';
+            searchableSections.forEach(section => {
+                const sectionText = section.textContent.toLowerCase();
+                if (query === '' || sectionText.includes(query)) {
+                    section.style.display = 'block';
+                    totalVisible++;
+
+                    // Filter sub-cards inside .team-grid if searching leadership team
+                    const teamCards = section.querySelectorAll('.team-card');
+                    if (teamCards.length > 0) {
+                        teamCards.forEach(card => {
+                            const cardText = card.textContent.toLowerCase();
+                            card.style.display = (query === '' || cardText.includes(query)) ? 'block' : 'none';
+                        });
+                    }
+                } else {
+                    section.style.display = 'none';
+                }
             });
 
-            // Filter Leadership Team Cards
-            document.querySelectorAll('.team-card').forEach(card => {
-                const text = card.textContent.toLowerCase();
-                card.style.display = text.includes(query) ? 'block' : 'none';
-            });
-
-            // Filter Footprint List Items
-            document.querySelectorAll('.footprint li').forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'list-item' : 'none';
-            });
+            toggleNoResultsMsg(main, totalVisible === 0 && query !== '', query);
         });
     }
+
+    // 3. PROGRAMS PAGE SEARCH (#programs-search)
+    const programsSearch = document.getElementById('programs-search');
+    if (programsSearch) {
+        programsSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const grid = document.querySelector('.programs-grid');
+            if (!grid) return;
+
+            let matchCount = 0;
+            grid.querySelectorAll('.program-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const matches = query === '' || text.includes(query);
+                card.style.display = matches ? 'block' : 'none';
+                if (matches) matchCount++;
+            });
+
+            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
+        });
+    }
+
+    // 4. GALLERY PAGE SEARCH (#gallery-search)
+    const gallerySearch = document.getElementById('gallery-search');
+    if (gallerySearch) {
+        gallerySearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const grid = document.querySelector('.gallery-grid');
+            if (!grid) return;
+
+            let matchCount = 0;
+            grid.querySelectorAll('.gallery-item').forEach(item => {
+                const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
+                const matches = query === '' || altText.includes(query);
+                item.style.display = matches ? 'block' : 'none';
+                if (matches) matchCount++;
+            });
+
+            toggleNoResultsMsg(grid.parentElement, matchCount === 0 && query !== '', query);
+        });
+    }
+}
 
     // 3. Programs Page Search (#programs-search)
     const programsSearch = document.getElementById('programs-search');
@@ -842,6 +946,18 @@ function initSiteSearch() {
             });
         });
     }
+    /* ---------- ENQUIRY PAGE SEARCH FILTERING ---------- */
+const enquiryPageSearch = document.getElementById('enquiry-page-search');
+if (enquiryPageSearch) {
+    enquiryPageSearch.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const box = document.querySelector('.enquiry-form-section.searchable-box');
+        if (box) {
+            const text = box.textContent.toLowerCase();
+            box.style.display = (query === '' || text.includes(query)) ? 'block' : 'none';
+        }
+    });
+}
 }
 
 /* ---------- 3. GALLERY LIGHTBOX MODAL ---------- */
@@ -1013,4 +1129,34 @@ function initEnquiryForm() {
         }
     });
 }
+/* ---------- EVENTS / GALLERY SEARCH FILTERING ---------- */
+const eventsSearch = document.getElementById('events-search');
+if (eventsSearch) {
+    eventsSearch.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const grid = document.querySelector('.gallery-grid');
+        if (!grid) return;
+
+        let matchCount = 0;
+        grid.querySelectorAll('.gallery-item').forEach(item => {
+            const altText = item.getAttribute('alt') ? item.getAttribute('alt').toLowerCase() : '';
+            const matches = query === '' || altText.includes(query);
+            item.style.display = matches ? 'block' : 'none';
+            if (matches) matchCount++;
+        });
+    });
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
 }

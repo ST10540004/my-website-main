@@ -78,9 +78,14 @@
     </header>
 
     <main class="contact-main">
-        <section class="contact-hero">
+        <section class="contact-hero" style="text-align: center; padding: 2rem 1rem;">
             <h1>Get in <span>Touch</span></h1>
             <p>Questions about our youth programs, volunteer opportunities, or partnerships? Send a message, call or email, and Youth Quake will reply.</p>
+            
+            <!-- Contact Search Bar -->
+            <div class="search-container" style="max-width: 600px; margin: 1.5rem auto;">
+                <input type="text" id="contact-search" placeholder="Search contact options (e.g., email, phone, address, camps)..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-border, #ccc); border-radius: var(--radius, 8px); font-size: 1rem;">
+            </div>
         </section>
 
         <!-- Main Split Container -->
@@ -88,7 +93,7 @@
             
             <!-- Left Panel: Info & Google Map Embed -->
             <div class="contact-info-panel">
-                <div class="contact-details-box">
+                <div class="contact-details-box searchable-box">
                     <h2>Contact details</h2>
                     <p><strong>EMAIL</strong> <a href="mailto:YouthQuake@mandelac.za">YouthQuake@mandelac.za</a></p>
                     <p><strong>PHONE</strong> <a href="tel:+27786510460">078 651 0460</a></p>
@@ -112,7 +117,7 @@
                 </div>
 
                 <!-- Secondary Info Section -->
-                <div class="mission-info-box">
+                <div class="mission-info-box searchable-box">
                     <h2>Let's build this together</h2>
                     <p>We are always happy to hear from community partners, schools, and youth.</p>
                     <ul>

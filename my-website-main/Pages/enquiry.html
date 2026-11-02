@@ -3,15 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Enquire | Volunteer, Partner or Sponsor | Youth Quake</title>
-    <meta name="description" content="Enquire about volunteering, mentorship, sponsorship or bringing Youth Quake to your school or campus and get a response on availability and cost.">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Enquire | Volunteer, Partner or Sponsor | Youth Quake NPO</title>
+    <meta name="description" content="Enquire about volunteering, mentorship, sponsorship or bringing Youth Quake to your school or campus across the Eastern Cape and get a prompt response.">
+    <meta name="keywords" content="Youth Quake enquiry, volunteer Youth Quake, sponsor youth programs, school partnership, Eastern Cape NPO">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://YOUR-SITE-URL/pages/enquiry.html">
+
+    <!-- Open Graph / Social Sharing Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Enquire | Volunteer, Partner or Sponsor | Youth Quake">
+    <meta property="og:description" content="Whether you want to volunteer, partner, or bring Youth Quake to your school or campus, tell us more below.">
+    <meta property="og:url" content="https://YOUR-SITE-URL/pages/enquiry.html">
+    <meta property="og:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
+    <meta property="og:site_name" content="Youth Quake NPO">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Enquire | Youth Quake NPO">
+    <meta name="twitter:description" content="Connect with Youth Quake for volunteering, mentorship, and school partnerships.">
+    <meta name="twitter:image" content="https://YOUR-SITE-URL/Assets/logo-black.png">
+
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="../Assets/CSS/style.css">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "NGO",
+        "name": "Youth Quake NPO",
+        "description": "Youth Quake mobilises, mentors and equips young people through education, leadership and community action.",
+        "url": "https://YOUR-SITE-URL/",
+        "email": "YouthQuake@mandelac.za",
+        "telephone": "+27786510460",
+        "foundingDate": "1998",
+        "parentOrganization": { "@type": "Organization", "name": "Burning Bush Ministries" },
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Bantry Farm, Cove Ridge",
+            "addressLocality": "KuGompo City",
+            "postalCode": "5200",
+            "addressCountry": "ZA"
+        }
+    }
+    </script>
 </head>
 <body>
 
     <header>
         <a href="index.html" class="logo">Youth Quake <span>NPO</span></a>
-        <nav>
+        <nav aria-label="Main Navigation">
             <a href="../index.html">Home</a>
             <a href="./about.html">About</a>
             <a href="./programs.html">Programs</a>
@@ -24,15 +67,19 @@
     </header>
 
     <main>
-        <section class="page-intro">
+        <!-- Hero Section with Integrated Search Bar -->
+        <section class="page-intro" style="text-align: center; padding: 2rem 1rem;">
             <p class="eyebrow">Enquiry</p>
             <h1>Let's build this together.</h1>
-            <p>Whether you want to volunteer, partner with us, or bring Youth Quake
-            to your school or campus, tell us more below — our team responds to
-            every enquiry.</p>
+            <p>Whether you want to volunteer, partner with us, or bring Youth Quake to your school or campus, tell us more below — our team responds to every enquiry.</p>
+
+            <!-- Search Bar -->
+            <div class="search-container" style="max-width: 600px; margin: 1.5rem auto;">
+                <input type="text" id="enquiry-page-search" placeholder="Search enquiry options (e.g., volunteer, sponsor, school)..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-border, #ccc); border-radius: var(--radius, 8px); font-size: 1rem;">
+            </div>
         </section>
 
-        <section class="enquiry-form-section">
+        <section class="enquiry-form-section searchable-box">
             <form id="enquiry-form" action="#" method="post" novalidate>
 
                 <div class="form-group" id="group-enquiry-name">
