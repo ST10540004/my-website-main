@@ -127,7 +127,8 @@ Youth Quake Website/
 
   -----------------------------------
   ## References
-  eaflet (2026) Leaflet: an open-source JavaScript library for mobile-friendly interactive maps. Available at: https://leafletjs.com/ (Accessed: 1 November 2026).
+
+Leaflet (2026) Leaflet: an open-source JavaScript library for mobile-friendly interactive maps. Available at: https://leafletjs.com/ (Accessed: 1 November 2026).
 
 MDN Web Docs (2026a) HTML5 forms: client-side validation. Mozilla Developer Network. Available at: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data (Accessed: 1 November 2026).
 
