@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <!-- Home Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- About Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/about.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Programs Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/programs.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Gallery Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/gallery.html</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Events Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/events.html</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Contact Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/contact.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Enquiry Page -->
+    <url>
+        <loc>https://YOUR-SITE-URL/Pages/enquiry.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+</urlset>
