@@ -101,6 +101,47 @@ Youth Quake Website/
 * World Health Organization (2023) Guidance on the use of artificial intelligence in healthcare and research. Geneva: World Health Organization. Available at: https://www.who.int/publications/i/item/9789240078870 (Accessed: 17 September 2026).
 * 
   --------------------
+  # Part 3
+  ------------------
+  ## Improvements from part 2
+   * provide specific details on readME
+   * Layout Structure
+   * Responsive Layout design
+   * Github pushing with descriptive commits
+   * Changeloag
+  -----------------------
+  ## Update Part 3
+  * Implemented javascript interactive accordion buttons on the "about" page for the (Background, Mission, Vision, Our Team) content.
+  * Implemented a google interactive map in the 'contact' page.
+  * Added a gallery lightbox for the images in the about page for an improved user experience.
+  *  Added a realtime date stamp in the home page header section for.
+  * Added a timestamp (dynamic) in the footer sections of the contact & about pages for a good user experience.
+  *  Customized the layout of the dynamic content in the css file.
+  * Added javascript form input validation rules in the contact form.
+  * Added a feedback alert box for the form submission.
+  *  Inserted the email recipient processing functionality for the contact form.
+  *  Created the enquiry page with the inquiry form.
+  * Added javascript form validation rules for the user input.
+  * Added a feedback functionality for the form submission.
+  * Applied a proper css layout for the enquiry form.
+
+  -----------------------------------
+  ## References
+  eaflet (2026) Leaflet: an open-source JavaScript library for mobile-friendly interactive maps. Available at: https://leafletjs.com/ (Accessed: 1 November 2026).
+
+MDN Web Docs (2026a) HTML5 forms: client-side validation. Mozilla Developer Network. Available at: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data (Accessed: 1 November 2026).
+
+MDN Web Docs (2026b) Using Fetch API. Mozilla Developer Network. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch (Accessed: 1 November 2026).
+
+OpenStreetMap (2026) Tile servers and mapping data. OpenStreetMap Foundation. Available at: https://www.openstreetmap.org (Accessed: 1 November 2026).
+
+Schema.org (2026) NGO schema specification. Available at: https://schema.org/NGO (Accessed: 3 November 2026).
+
+W3C (2023) Web content accessibility guidelines (WCAG) 2.2. World Wide Web Consortium. Available at: https://www.w3.org/TR/WCAG22/ (Accessed: 1 November 2026).
+
+--------------------------------------
+
+
    
   
   
