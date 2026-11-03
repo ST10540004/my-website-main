@@ -1,7 +1,4 @@
-# robots.txt for Youth Quake NPO website
 User-agent: *
 Allow: /
-Allow: /Pages/
 
-# Sitemap location
-Sitemap: https://YOUR-SITE-URL/sitemap.xml
+Sitemap: https://st10540004.github.io/my-website-main/sitemap.xml
